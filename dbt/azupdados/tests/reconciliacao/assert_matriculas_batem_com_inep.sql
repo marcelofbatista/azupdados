@@ -1,3 +1,4 @@
+{{ config(tags=["reconciliacao"]) }}
 {#
   Reconciliação com o oráculo oficial: a soma de matrículas da educação básica na silver
   precisa ser IGUAL ao total divulgado pelo INEP para cada ano em que temos o número oficial.
