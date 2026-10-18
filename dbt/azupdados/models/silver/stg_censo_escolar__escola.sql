@@ -9,7 +9,9 @@
     'qt_mat_bas', 'qt_mat_inf', 'qt_mat_inf_cre', 'qt_mat_inf_pre',
     'qt_mat_fund', 'qt_mat_fund_ai', 'qt_mat_fund_af', 'qt_mat_med',
     'qt_mat_prof', 'qt_mat_eja', 'qt_mat_esp', 'qt_mat_esp_cc', 'qt_mat_esp_ce',
-    'qt_mat_bas_integral', 'qt_doc_bas', 'qt_tur_bas'
+    'qt_mat_inf_int', 'qt_mat_inf_cre_int', 'qt_mat_inf_pre_int',
+    'qt_mat_fund_int', 'qt_mat_fund_ai_int', 'qt_mat_fund_af_int', 'qt_mat_med_int',
+    'qt_doc_bas', 'qt_tur_bas'
 ] -%}
 
 with uniao as (
@@ -26,9 +28,9 @@ select
     {{ coluna_ou_nulo('no_municipio', cols, 'trim(no_municipio)') }},
     {{ para_inteiro('tp_dependencia') }}               as tp_dependencia,
     {{ para_inteiro('tp_localizacao') }}               as tp_localizacao,
-    {{ coluna_ou_nulo('tp_situacao_funcionamento', cols, para_inteiro('tp_situacao_funcionamento')) }},
+    {{ coluna_ou_nulo('tp_situacao_funcionamento', cols, para_inteiro('tp_situacao_funcionamento'), 'integer') }},
     {%- for q in quantidades %}
-    {{ coluna_ou_nulo(q, cols, quantidade_inep(q)) }},
+    {{ coluna_ou_nulo(q, cols, quantidade_inep(q), 'integer') }},
     {%- endfor %}
     _dbt_source_relation                               as _tabela_bronze
 from uniao

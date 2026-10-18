@@ -45,3 +45,8 @@ models:
                 field: tp_dependencia
       - name: qt_mat_bas
         tests: [sem_sentinela_inep]
+      - name: qt_mat_integral_inf_fund_med
+        description: >
+          Matrículas em tempo integral, derivadas como infantil + fundamental + médio.
+          O INEP não publica um total de integral para a educação básica; EJA e profissional ficam de fora.
+        tests: [sem_sentinela_inep]

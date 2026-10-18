@@ -23,6 +23,14 @@ select
     s.qt_mat_esp,
     s.qt_mat_esp_cc,
     s.qt_mat_esp_ce,
-    s.qt_mat_bas_integral
+    s.qt_mat_inf_int,
+    s.qt_mat_fund_int,
+    s.qt_mat_med_int,
+    -- o INEP não publica um total de tempo integral da educação básica (não existe QT_MAT_BAS_INT);
+    -- este total é derivado e cobre só infantil + fundamental + médio (sem EJA e profissional)
+    case
+        when coalesce(s.qt_mat_inf_int, s.qt_mat_fund_int, s.qt_mat_med_int) is null then null
+        else coalesce(s.qt_mat_inf_int, 0) + coalesce(s.qt_mat_fund_int, 0) + coalesce(s.qt_mat_med_int, 0)
+    end                                                     as qt_mat_integral_inf_fund_med
 from {{ ref('stg_censo_escolar__escola') }} s
 join {{ ref('dim_escola') }} e using (co_entidade)

@@ -17,10 +17,14 @@
     {{ return(nomes) }}
 {%- endmacro %}
 
-{% macro coluna_ou_nulo(nome, existentes, expressao=none) -%}
+{#
+  O nulo precisa ter tipo: um `null` sem tipo vira TEXT na view e quebra contas e COALESCE
+  na gold quando a coluna não existe em nenhum ano carregado.
+#}
+{% macro coluna_ou_nulo(nome, existentes, expressao=none, tipo='text') -%}
     {%- if nome in existentes -%}
         {{ expressao if expressao is not none else nome }}
     {%- else -%}
-        null
+        null::{{ tipo }}
     {%- endif %} as {{ nome }}
 {%- endmacro %}
