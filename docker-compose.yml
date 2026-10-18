@@ -14,7 +14,20 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./sql/init:/docker-entrypoint-initdb.d:ro
-    shm_size: 1g
+    # Teto de memória: o azupdados divide o servidor com serviços de produção e nunca pode
+    # disputar RAM com eles. Parâmetros do Postgres dimensionados para caber nesse limite.
+    mem_limit: 1536m
+    shm_size: 256m
+    command:
+      - postgres
+      - -c
+      - shared_buffers=384MB
+      - -c
+      - work_mem=32MB
+      - -c
+      - maintenance_work_mem=256MB
+      - -c
+      - effective_cache_size=1GB
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
