@@ -90,7 +90,7 @@ def carregar_postgres(caminho: Path, colunas: list[str], enc_pg: str, ano: int) 
     # no Postgres as colunas ficam em minúsculas, sem aspas necessárias no SQL
     ddl_colunas = ",\n  ".join(f'"{c.lower()}" TEXT' for c in colunas)
     conninfo = (
-        f"host={os.environ.get('POSTGRES_HOST', 'localhost')} "
+        f"host={os.environ.get('POSTGRES_HOST', '127.0.0.1')} "
         f"port={os.environ.get('POSTGRES_PORT', '5432')} "
         f"dbname={os.environ['POSTGRES_DB']} user={os.environ['POSTGRES_USER']} "
         f"password={os.environ['POSTGRES_PASSWORD']}"
@@ -117,7 +117,7 @@ def carregar_postgres(caminho: Path, colunas: list[str], enc_pg: str, ano: int) 
 
 def registrar_carga(ano, arquivo, md5, md5_ok, tabela, linhas, n_colunas) -> None:
     conninfo = (
-        f"host={os.environ.get('POSTGRES_HOST', 'localhost')} "
+        f"host={os.environ.get('POSTGRES_HOST', '127.0.0.1')} "
         f"port={os.environ.get('POSTGRES_PORT', '5432')} "
         f"dbname={os.environ['POSTGRES_DB']} user={os.environ['POSTGRES_USER']} "
         f"password={os.environ['POSTGRES_PASSWORD']}"
