@@ -67,6 +67,17 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 04 | Linhas duplicadas em extratos oficiais | `unique` na chave natural | 🚧 |
 | 05 | Teste de unicidade só sobre valores preenchidos esconde duplicatas | `unicidade_com_nulos` | ✅ |
 | 06 | Contagem inteira exportada como `"0.0"` quebra o cast direto para inteiro | macro `para_inteiro` | ✅ |
+| 07 | "Número de escolas" depende da definição: em 2024 há 215.545 linhas no arquivo, 181.065 em atividade e 179.286 com matrícula — o INEP divulga cerca de 179,3 mil | — | 🚧 |
+
+## Reconciliação com números oficiais
+
+Todo total calculado é conferido contra o número publicado pelo INEP, registrado com a fonte em
+[`seeds/ref_totais_oficiais_inep.csv`](dbt/azupdados/seeds/ref_totais_oficiais_inep.csv). O teste
+`assert_matriculas_batem_com_inep` exige igualdade exata.
+
+| Ano | Matrículas na educação básica (INEP) | Calculado no `azupdados` | Diferença |
+|---|---|---|---|
+| 2024 | 47.088.922 | 47.088.922 | 0 |
 
 ## Como rodar
 

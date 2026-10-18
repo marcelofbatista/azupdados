@@ -10,3 +10,10 @@ seeds:
     columns:
       - name: tp_localizacao
         tests: [unique, not_null]
+  - name: ref_totais_oficiais_inep
+    description: >
+      Totais oficiais divulgados pelo INEP, usados como oráculo de reconciliação.
+      Cada linha cita a publicação de onde o número foi tirado.
+    columns:
+      - name: ano_censo
+        tests: [unique, not_null]
