@@ -1,0 +1,5 @@
+dbt-core==1.10.*
+dbt-postgres==1.9.*
+psycopg[binary]==3.2.*
+pyarrow>=17
+ruff

@@ -1,0 +1,12 @@
+version: 2
+seeds:
+  - name: dim_dependencia_adm
+    description: Dependência administrativa da escola (domínio do INEP).
+    columns:
+      - name: tp_dependencia
+        tests: [unique, not_null]
+  - name: dim_localizacao
+    description: Localização da escola (domínio do INEP).
+    columns:
+      - name: tp_localizacao
+        tests: [unique, not_null]

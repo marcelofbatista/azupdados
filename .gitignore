@@ -1,0 +1,24 @@
+# segredos
+.env
+*.json.key
+gcp-*.json
+dbt/azupdados/profiles.yml
+
+# dados (nunca versionar microdados)
+data/landing/*
+data/bronze/*
+!data/landing/.gitkeep
+!data/bronze/.gitkeep
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# dbt
+dbt/azupdados/target/
+dbt/azupdados/dbt_packages/
+dbt/azupdados/logs/
+logs/
+dbt/azupdados/.user.yml
+dbt/azupdados/package-lock.yml

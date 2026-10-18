@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_censo_escolar__escola
+    description: >
+      Censo Escolar (INEP) no grão escola × ano, tipado e com sentinelas tratados.
+      Une todas as tabelas `bronze.censo_escolar_escola_<ano>` carregadas.
+    columns:
+      - name: ano_censo
+        description: Ano de referência do Censo Escolar.
+        tests: [not_null]
+      - name: co_entidade
+        description: Código INEP da escola (chave natural).
+        tests: [not_null]
+      - name: tp_dependencia
+        description: "Dependência administrativa: 1 Federal, 2 Estadual, 3 Municipal, 4 Privada."
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+                quote: false
+      - name: tp_localizacao
+        description: "Localização: 1 Urbana, 2 Rural."
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2]
+                quote: false
+      - name: qt_mat_bas
+        description: Total de matrículas na educação básica, com sentinelas convertidos em nulo.
+        tests: [sem_sentinela_inep]
+    tests:
+      - unicidade_com_nulos:
+          arguments:
+            colunas: [ano_censo, co_entidade]

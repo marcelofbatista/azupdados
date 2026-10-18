@@ -1,0 +1,22 @@
+name: azupdados
+version: "0.1.0"
+config-version: 2
+profile: azupdados
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+models:
+  azupdados:
+    silver:
+      +schema: silver
+      +materialized: view
+    gold:
+      +schema: gold
+      +materialized: table
+
+seeds:
+  azupdados:
+    +schema: gold

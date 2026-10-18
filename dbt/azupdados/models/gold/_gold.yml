@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: dim_tempo
+    description: Dimensão de tempo no grão ano.
+    columns:
+      - name: ano_censo
+        tests: [unique, not_null]
+
+  - name: dim_escola
+    description: >
+      Dimensão escola (SCD tipo 1). Atributos descritivos do ano mais recente em que a escola
+      aparece no Censo; `primeiro_ano` e `ultimo_ano` delimitam sua presença na série.
+    columns:
+      - name: escola_sk
+        description: Chave substituta (hash do código INEP).
+        tests: [unique, not_null]
+      - name: co_entidade
+        description: Código INEP da escola.
+        tests: [unique, not_null]
+
+  - name: fato_matricula_escola_ano
+    description: Matrículas da educação básica. Grão — escola × ano.
+    columns:
+      - name: fato_matricula_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_escola')
+                field: escola_sk
+      - name: ano_censo
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tempo')
+                field: ano_censo
+      - name: tp_dependencia
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_dependencia_adm')
+                field: tp_dependencia
+      - name: qt_mat_bas
+        tests: [sem_sentinela_inep]

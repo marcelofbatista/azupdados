@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: azupdados
+      POSTGRES_USER: azupdados
+      POSTGRES_PASSWORD: ci
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: azupdados
+          POSTGRES_USER: azupdados
+          POSTGRES_PASSWORD: ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U azupdados" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+          cp dbt/azupdados/profiles.yml.example dbt/azupdados/profiles.yml
+      - name: Lint (Python)
+        run: ruff check ingest
+      - name: Criar schemas do medalhão
+        run: PGPASSWORD=ci psql -h localhost -U azupdados -d azupdados -f sql/init/01_schemas.sql
+      - name: Bronze — carregar fixtures sintéticas
+        run: |
+          for ano in 2023 2024; do
+            python ingest/bronze_censo_escolar.py --sem-parquet --ano $ano \
+              --arquivo data/fixtures/microdados_ed_basica_${ano}_sintetico.csv
+          done
+      - name: dbt build (silver + gold + testes)
+        working-directory: dbt/azupdados
+        run: |
+          dbt deps --profiles-dir .
+          dbt build --profiles-dir .
