@@ -16,25 +16,37 @@ SAEB="1qGY08ZW02v2IxHWsNZHDwMX5ucQFJ61d"           # microdados_saeb_<ano>.zip
 IDEB="1YLu25NCraU4GkVSpV16WaSUFr526clN_"           # divulgações oficiais do IDEB
 
 OPTS=(--progress --transfers 4 --checksum)
+INCLUIR_SAEB="${INCLUIR_SAEB:-0}"   # SAEB ocupa ~5 GB zipado; só baixe quando for processar
+
+# --drive-root-folder-id funciona em qualquer versão do rclone (inclusive a 1.53 do apt)
+copiar() { local pasta="$1" destino="$2"; shift 2
+  rclone copy "${REMOTE}:" "${destino}" --drive-root-folder-id "${pasta}" "${OPTS[@]}" "$@"; }
+
+# Proteção de disco: aborta se sobrar menos de 15 GB livres no destino
+mkdir -p "${DESTINO}"
+LIVRE_GB=$(df -BG --output=avail "${DESTINO}" | tail -1 | tr -dc '0-9')
+if [ "${LIVRE_GB}" -lt 15 ]; then
+  echo "Apenas ${LIVRE_GB} GB livres em ${DESTINO}. Abortando para não lotar o disco."; exit 1
+fi
 
 echo ">> Censo Escolar (CSVs)"
-rclone copy "${REMOTE},root_folder_id=${CENSO_CSV}:" "${DESTINO}/censo_escolar" "${OPTS[@]}" \
-  --include "microdados_ed_basica_*.{csv,CSV}"
+copiar "${CENSO_CSV}" "${DESTINO}/censo_escolar" --include "microdados_ed_basica_*.{csv,CSV}"
 
 echo ">> md5 oficial"
-rclone copy "${REMOTE},root_folder_id=${CENSO_2024}:" "${DESTINO}/censo_escolar/md5" "${OPTS[@]}" \
-  --include "md5_*.txt"
+copiar "${CENSO_2024}" "${DESTINO}/censo_escolar/md5" --include "md5_*.txt"
 
 echo ">> Dicionários do Censo"
-rclone copy "${REMOTE},root_folder_id=${CENSO_DIC}:" "${DESTINO}/censo_escolar/dicionarios" "${OPTS[@]}"
+copiar "${CENSO_DIC}" "${DESTINO}/censo_escolar/dicionarios"
 
-echo ">> SAEB (somente microdados oficiais)"
-rclone copy "${REMOTE},root_folder_id=${SAEB}:" "${DESTINO}/saeb" "${OPTS[@]}" \
-  --include "microdados_saeb_*.zip" --include "Dicionario_Saeb_*.xlsx" --max-depth 1
+if [ "${INCLUIR_SAEB}" = "1" ]; then
+  echo ">> SAEB (somente microdados oficiais)"
+  copiar "${SAEB}" "${DESTINO}/saeb" --include "microdados_saeb_*.zip" --include "Dicionario_Saeb_*.xlsx" --max-depth 1
+else
+  echo ">> SAEB pulado (rode com INCLUIR_SAEB=1 quando for processar)"
+fi
 
 echo ">> IDEB (somente divulgações oficiais)"
-rclone copy "${REMOTE},root_folder_id=${IDEB}:" "${DESTINO}/ideb" "${OPTS[@]}" \
-  --include "*divulgacao*.{zip,xlsx}" --include "nota_informativa_*.pdf" --max-depth 1
+copiar "${IDEB}" "${DESTINO}/ideb" --include "*divulgacao*.{zip,xlsx}" --include "nota_informativa_*.pdf" --max-depth 1
 
 echo ">> Concluído"
 du -sh "${DESTINO}"/*

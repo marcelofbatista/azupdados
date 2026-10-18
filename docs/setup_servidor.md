@@ -7,7 +7,8 @@ Passo a passo para subir o `azupdados` em um servidor Linux com Docker já insta
 ```bash
 df -h /                       # precisa de pelo menos 30 GB livres
 docker --version && docker compose version
-sudo apt update && sudo apt install -y git make python3-venv python3-pip rclone
+sudo apt update && sudo apt install -y git make python3-venv python3-pip
+curl -fsSL https://rclone.org/install.sh | sudo bash   # rclone atual (o do apt é de 2020)
 ```
 
 ## 2. Clonar e configurar
@@ -32,12 +33,12 @@ O servidor não tem navegador, então a autorização é feita no notebook:
    `client_secret` vazios → escopo `2` (somente leitura) → `Edit advanced config? n` →
    `Use web browser to automatically authenticate? n` → cole o token → `Configure this as a Shared Drive? n`
    (responda `y` só se as pastas estiverem em um Drive compartilhado).
-3. Teste: `rclone lsd "gdrive,root_folder_id=14PSE2XhXsEZawGeiV1xjm9Joj-Brtgrk:"`
+3. Teste: `rclone ls gdrive: --drive-root-folder-id 14PSE2XhXsEZawGeiV1xjm9Joj-Brtgrk --max-depth 1`
 
 ## 4. Baixar os microdados e carregar a bronze
 
 ```bash
-./ingest/sync_drive.sh        # ~10 GB; pode levar um tempo
+./ingest/sync_drive.sh        # Censo + IDEB (~4 GB); SAEB só com INCLUIR_SAEB=1
 ls -lh data/landing/censo_escolar
 
 make bronze-censo ARQ=data/landing/censo_escolar/microdados_ed_basica_2024.csv ANO=2024 \
