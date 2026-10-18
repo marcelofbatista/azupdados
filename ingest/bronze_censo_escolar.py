@@ -72,7 +72,9 @@ def gravar_parquet(caminho: Path, colunas: list[str], encoding: str, ano: int) -
     destino.parent.mkdir(parents=True, exist_ok=True)
     leitor = pacsv.open_csv(
         caminho,
-        read_options=pacsv.ReadOptions(encoding=encoding, block_size=64 * 1024 * 1024),
+        # blocos pequenos: pico de ~400 MB de RAM num arquivo de 370+ colunas (64 MB chegava a ~700 MB
+        # e o processo foi morto por falta de memória num servidor compartilhado)
+        read_options=pacsv.ReadOptions(encoding=encoding, block_size=8 * 1024 * 1024),
         parse_options=pacsv.ParseOptions(delimiter=DELIMITADOR),
         convert_options=pacsv.ConvertOptions(
             column_types={c: pa.string() for c in colunas},
