@@ -24,7 +24,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ENDPOINT = "https://backend.rpinep2.prd.app.rnp.br/ide/send-process/{uuid}"
@@ -117,7 +117,7 @@ def main() -> None:
             "ano": ano,
             "consulta": sql,
             "excluiu_aee": not args.incluir_aee,
-            "extraido_em": datetime.now(timezone.utc).isoformat(),
+            "extraido_em": datetime.now(UTC).isoformat(),
             "resposta": resposta,  # inclui linhas e estatísticas de privacidade (ruído, IC 95%)
         }
         arq = DESTINO / f"tipo_deficiencia_{ano}.json"
