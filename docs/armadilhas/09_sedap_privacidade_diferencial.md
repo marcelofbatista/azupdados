@@ -90,6 +90,20 @@ Com os três cuidados (filtros de AEE e de etapa, `COUNT` por métrica e escala 
 2015–2024 passa em todos os testes de faixa, sem nenhuma célula negativa. Os avisos que restam são de
 grupos com o total a mais de 5% do Censo aberto.
 
+## Os 22 avisos que ficam: o SEDAP+ conta aluno, o Censo conta matrícula
+
+Na série final, 22 grupos (de 1.070) ficam a mais de 5% do Censo aberto, **todos para baixo**. Ruído
+seria simétrico; um desvio sempre negativo é viés. Quatorze são da **rede federal**, e o resto se concentra
+na rede estadual de SP (2022: −5,5%; 2023: −8,9%, ou 328 mil matrículas a menos) e do PI, e na rede privada
+do AC.
+
+A explicação mais provável é de novo a limitação de contribuição: o aluno com **duas matrículas de
+escolarização no mesmo grupo** (ensino médio + técnico concomitante num instituto federal, ou duas turmas
+regulares na mesma rede) só conta uma vez no SEDAP+, enquanto o Censo conta as duas matrículas. Não afeta
+o método de proporção enquanto o estudante da educação especial tiver a mesma chance de dupla matrícula
+que os demais — hipótese razoável, mas não verificada. O teste continua como *warn* de propósito: ele
+documenta onde o SEDAP+ e o Censo medem coisas diferentes.
+
 ## Por que o número do SEDAP+ não bate com o sistema de gestão das redes
 
 No DF, o TEA da rede estadual em 2024 é 9,1 mil no Censo e cerca de 15,9 mil no sistema de gestão da
