@@ -53,6 +53,18 @@ O filtro `TP_ETAPA_ENSINO IS NOT NULL` elimina as matrículas extras antes da ag
 no SEDAP+, o total de um recorte depende da forma da consulta sempre que um aluno pode cair em mais de
 um grupo. Defina a população com filtros explícitos, não pelo agrupamento.
 
+## `SUM` e `COUNT` não têm o mesmo ruído
+
+Nas bases de 2015 a 2023, contar os tipos com `SUM(CASE WHEN IN_AUTISMO = 1 THEN 1 ELSE 0 END)` produz
+ruído enorme: o total da educação especial assim calculado desviou do Censo aberto, **em média, 48% a 109%
+por grupo**, com 199 a 257 células negativas por ano (o TEA do DF em 2023 saiu 57). Na base de 2024, a
+mesma consulta ficou a 0,4%.
+
+A mesma contagem feita com `COUNT(ID_MATRICULA) ... WHERE IN_NECESSIDADE_ESPECIAL = 1` em 2023 ficou a
+**0,8% em média** (máximo de 8,2% num grupo pequeno), sem nenhum negativo. Por isso o `azupdados` faz
+**uma consulta por métrica**, sempre com `COUNT` e filtro: 12 consultas por ano em vez de uma. Cada
+resposta fica em cache (`_partes/`), para que nenhuma consulta seja paga duas vezes.
+
 ## Como o `azupdados` trata
 
 - **Grão grosso**: só UF × dependência × ano. Em escola ou município o ruído destrói o dado.

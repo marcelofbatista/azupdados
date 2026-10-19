@@ -5,288 +5,356 @@
  "extraido_em": "2026-10-19T00:00:00+00:00",
  "resposta": {
   "success": true,
-  "bqconnector_statistics": {
-   "columns": [
-    {
-     "resolved_name": "total_matriculas",
-     "base_name": "ID_MATRICULA",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "COUNT",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+  "bqconnector_statistics": [
+   {
+    "columns": [
+     {
+      "resolved_name": "total_matriculas",
+      "base_name": "ID_MATRICULA",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "COUNT",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "total_educacao_especial",
-     "base_name": "IN_NECESSIDADE_ESPECIAL",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "total_educacao_especial",
+      "base_name": "IN_NECESSIDADE_ESPECIAL",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "cegueira",
-     "base_name": "IN_CEGUEIRA",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "cegueira",
+      "base_name": "IN_CEGUEIRA",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "baixa_visao",
-     "base_name": "IN_BAIXA_VISAO",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "baixa_visao",
+      "base_name": "IN_BAIXA_VISAO",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "surdez",
-     "base_name": "IN_SURDEZ",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "surdez",
+      "base_name": "IN_SURDEZ",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "def_auditiva",
-     "base_name": "IN_DEF_AUDITIVA",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "def_auditiva",
+      "base_name": "IN_DEF_AUDITIVA",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "surdocegueira",
-     "base_name": "IN_SURDOCEGUEIRA",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "surdocegueira",
+      "base_name": "IN_SURDOCEGUEIRA",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "def_fisica",
-     "base_name": "IN_DEF_FISICA",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "def_fisica",
+      "base_name": "IN_DEF_FISICA",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "def_intelectual",
-     "base_name": "IN_DEF_INTELECTUAL",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "def_intelectual",
+      "base_name": "IN_DEF_INTELECTUAL",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "def_multipla",
-     "base_name": "IN_DEF_MULTIPLA",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "def_multipla",
+      "base_name": "IN_DEF_MULTIPLA",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "autismo_tea",
-     "base_name": "IN_AUTISMO_TEA",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "autismo_tea",
+      "base_name": "IN_AUTISMO_TEA",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    },
-    {
-     "resolved_name": "superdotacao",
-     "base_name": "IN_SUPERDOTACAO",
-     "base_table": "raw.BAS_MATRICULA_2024",
-     "type": "NUMERIC",
-     "aggregation_fn": "SUM",
-     "results": {
-      "noise_rate": -0.003,
-      "average": {
-       "final": 1.0
-      },
-      "median": {
-       "final": 1
-      },
-      "confidence_interval": {
-       "final": {
-        "confidence_level": 0.95,
-        "lower_bound": 0.5,
-        "upper_bound": 1.5
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   },
+   {
+    "columns": [
+     {
+      "resolved_name": "superdotacao",
+      "base_name": "IN_SUPERDOTACAO",
+      "base_table": "raw.BAS_MATRICULA_2024",
+      "type": "NUMERIC",
+      "aggregation_fn": "SUM",
+      "results": {
+       "noise_rate": -0.003,
+       "average": {
+        "final": 1.0
+       },
+       "median": {
+        "final": 1
+       },
+       "confidence_interval": {
+        "final": {
+         "confidence_level": 0.95,
+         "lower_bound": 0.5,
+         "upper_bound": 1.5
+        }
        }
       }
      }
-    }
-   ],
-   "row_loss": 0,
-   "group_loss": 0
-  },
+    ],
+    "row_loss": 0,
+    "group_loss": 0
+   }
+  ],
   "rows": [
    {
     "CO_UF": "53",
@@ -337,5 +405,6 @@
     "superdotacao": 0
    }
   ]
- }
+ },
+ "metodo": "count_por_metrica"
 }

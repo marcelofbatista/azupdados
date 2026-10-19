@@ -59,23 +59,18 @@ def texto(v) -> str | None:
 
 
 def colunas_estatisticas(bloco) -> list[dict]:
-    """Acha a lista de estatísticas por coluna, esteja ela no topo ou aninhada num dicionário.
+    """Coleta TODAS as estatísticas por coluna (dicionários com `results`), onde quer que estejam.
 
-    A API devolve `bqconnector_statistics` como dicionário (com perdas de linha/grupo e a lista de
-    colunas dentro); a busca é genérica para não quebrar se o INEP mudar a chave.
+    Numa consulta única, `bqconnector_statistics` é um dicionário com a lista de colunas dentro; na
+    extração por métrica, é uma lista desses dicionários. A busca é recursiva e genérica para não
+    quebrar se o INEP mudar as chaves.
     """
+    if isinstance(bloco, dict):
+        if "results" in bloco and "resolved_name" in bloco:
+            return [bloco]
+        return [c for v in bloco.values() for c in colunas_estatisticas(v)]
     if isinstance(bloco, list):
-        if bloco and all(isinstance(x, dict) and "results" in x for x in bloco):
-            return bloco
-        for x in bloco:
-            achado = colunas_estatisticas(x)
-            if achado:
-                return achado
-    elif isinstance(bloco, dict):
-        for v in bloco.values():
-            achado = colunas_estatisticas(v)
-            if achado:
-                return achado
+        return [c for x in bloco for c in colunas_estatisticas(x)]
     return []
 
 
