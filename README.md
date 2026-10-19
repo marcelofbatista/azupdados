@@ -67,8 +67,8 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 04 | Linhas duplicadas em extratos oficiais | `unique` na chave natural | 🚧 |
 | 05 | Teste de unicidade só sobre valores preenchidos esconde duplicatas | `unicidade_com_nulos` | ✅ |
 | 06 | Contagem inteira exportada como `"0.0"` quebra o cast direto para inteiro | macro `para_inteiro` | ✅ |
-| 08 | Ausência codificada de formas diferentes: até 2021, escolas sem matrícula vêm com `0` nas colunas de quantidade; a partir de 2022, vêm com nulo. Médias por escola mudam de valor só por isso | — | 🚧 |
 | 07 | "Número de escolas" depende da definição: em 2024 há 215.545 linhas no arquivo, 181.065 em atividade e 179.286 com matrícula — o INEP divulga cerca de 179,3 mil | — | 🚧 |
+| 08 | Ausência codificada de formas diferentes: até 2021, escolas sem matrícula vêm com `0` nas colunas de quantidade; a partir de 2022, vêm com nulo. Médias por escola mudam de valor só por isso | — | 🚧 |
 
 ## Reconciliação com números oficiais
 
