@@ -98,7 +98,8 @@ def carregar_postgres(caminho: Path, colunas: list[str], enc_pg: str, ano: int) 
         f"password={os.environ['POSTGRES_PASSWORD']}"
     )
     with psycopg.connect(conninfo) as conn, conn.cursor() as cur:
-        cur.execute(f"DROP TABLE IF EXISTS {tabela}")
+        # CASCADE: a view da silver depende desta tabela; o dbt a recria no próximo build
+        cur.execute(f"DROP TABLE IF EXISTS {tabela} CASCADE")
         cur.execute(f"CREATE TABLE {tabela} (\n  {ddl_colunas}\n)")
         copy_sql = (
             f"COPY {tabela} FROM STDIN WITH "

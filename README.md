@@ -62,6 +62,8 @@ Convenções: chaves substitutas `<tabela>_sk`; chave de fato `<nome_do_fato>_sk
 
 ## Armadilhas documentadas
 
+O catálogo das bases do SEDAP+ está em [`docs/fontes/sedap_catalogo.md`](docs/fontes/sedap_catalogo.md).
+
 Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma correção na silver e uma nota em [`docs/armadilhas/`](docs/armadilhas/). As fixtures sintéticas em [`data/fixtures/`](data/fixtures/) reproduzem essas armadilhas de propósito, e o CI roda o pipeline completo sobre elas a cada commit.
 
 | # | Armadilha | Teste | Status |

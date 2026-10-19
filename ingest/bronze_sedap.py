@@ -28,14 +28,14 @@ import psycopg
 CHAVES = {"co_uf", "tp_dependencia"}
 
 DDL = """
-DROP TABLE IF EXISTS bronze.sedap_ee_tipo;
+DROP TABLE IF EXISTS bronze.sedap_ee_tipo CASCADE;  -- views da silver são recriadas pelo dbt
 CREATE TABLE bronze.sedap_ee_tipo (
   ano text, co_uf text, tp_dependencia text, metrica text, valor text,
   excluiu_aee text, extraido_em text, arquivo text, md5 text
 );
 COMMENT ON TABLE bronze.sedap_ee_tipo IS
   'BRONZE — respostas do SEDAP+ (INEP, privacidade diferencial) em formato longo, sem transformação.';
-DROP TABLE IF EXISTS bronze.sedap_ee_tipo_estatisticas;
+DROP TABLE IF EXISTS bronze.sedap_ee_tipo_estatisticas CASCADE;
 CREATE TABLE bronze.sedap_ee_tipo_estatisticas (
   ano text, metrica text, coluna_inep text, funcao text, taxa_ruido text,
   media text, mediana text, nivel_confianca text, ic_inferior text, ic_superior text, arquivo text
@@ -58,6 +58,27 @@ def texto(v) -> str | None:
     return None if v is None else str(v)
 
 
+def colunas_estatisticas(bloco) -> list[dict]:
+    """Acha a lista de estatísticas por coluna, esteja ela no topo ou aninhada num dicionário.
+
+    A API devolve `bqconnector_statistics` como dicionário (com perdas de linha/grupo e a lista de
+    colunas dentro); a busca é genérica para não quebrar se o INEP mudar a chave.
+    """
+    if isinstance(bloco, list):
+        if bloco and all(isinstance(x, dict) and "results" in x for x in bloco):
+            return bloco
+        for x in bloco:
+            achado = colunas_estatisticas(x)
+            if achado:
+                return achado
+    elif isinstance(bloco, dict):
+        for v in bloco.values():
+            achado = colunas_estatisticas(v)
+            if achado:
+                return achado
+    return []
+
+
 def ler(arq: Path) -> tuple[list[tuple], list[tuple]]:
     bruto = arq.read_bytes()
     md5 = hashlib.md5(bruto).hexdigest()
@@ -78,7 +99,7 @@ def ler(arq: Path) -> tuple[list[tuple], list[tuple]]:
             ))
 
     estat = []
-    for c in resp.get("bqconnector_statistics", []):
+    for c in colunas_estatisticas(resp.get("bqconnector_statistics")):
         res = c.get("results", {})
         ic = res.get("confidence_interval", {}).get("final", {})
         estat.append((
