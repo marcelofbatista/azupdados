@@ -67,6 +67,7 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 04 | Linhas duplicadas em extratos oficiais | `unique` na chave natural | 🚧 |
 | 05 | Teste de unicidade só sobre valores preenchidos esconde duplicatas | `unicidade_com_nulos` | ✅ |
 | 06 | Contagem inteira exportada como `"0.0"` quebra o cast direto para inteiro | macro `para_inteiro` | ✅ |
+| 08 | Ausência codificada de formas diferentes: até 2021, escolas sem matrícula vêm com `0` nas colunas de quantidade; a partir de 2022, vêm com nulo. Médias por escola mudam de valor só por isso | — | 🚧 |
 | 07 | "Número de escolas" depende da definição: em 2024 há 215.545 linhas no arquivo, 181.065 em atividade e 179.286 com matrícula — o INEP divulga cerca de 179,3 mil | — | 🚧 |
 
 ## Reconciliação com números oficiais
@@ -77,6 +78,15 @@ Todo total calculado é conferido contra o número publicado pelo INEP, registra
 
 | Ano | Matrículas na educação básica (INEP) | Calculado no `azupdados` | Diferença |
 |---|---|---|---|
+| 2015 | a conferir | 48.796.512 | — |
+| 2016 | a conferir | 48.817.479 | — |
+| 2017 | a conferir | 48.608.093 | — |
+| 2018 | 48.455.867 | 48.455.867 | 0 |
+| 2019 | 47.874.246 | 47.874.246 | 0 |
+| 2020 | 47.295.294 | 47.295.294 | 0 |
+| 2021 | 46.668.401 | 46.668.401 | 0 |
+| 2022 | 47.382.074 | 47.382.074 | 0 |
+| 2023 | 47.304.632 | 47.304.632 | 0 |
 | 2024 | 47.088.922 | 47.088.922 | 0 |
 
 ## Como rodar
