@@ -43,6 +43,7 @@ jobs:
             python ingest/bronze_censo_escolar.py --sem-parquet --ano $ano \
               --arquivo data/fixtures/microdados_ed_basica_${ano}_sintetico.csv
           done
+          python ingest/bronze_sedap.py --pasta data/fixtures/sedap
       - name: dbt build (silver + gold + testes)
         working-directory: dbt/azupdados
         run: |

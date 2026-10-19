@@ -24,8 +24,13 @@ O `azupdados` resolve isso uma vez, de forma auditável: preserva os arquivos of
 | Censos Demográficos 2010 e 2022 (IBGE) | município × idade × sexo | Brasil | ⏳ |
 | Projeções de população (IBGE, revisão 2024) | UF × idade × sexo × ano | 2000–2070 | ⏳ |
 | Territórios (IBGE) | região, UF, município | Brasil | ⏳ |
+| SEDAP+ (INEP) — educação especial por tipo | UF × dependência × ano | Brasil, 2015–2024 | 🚧 em validação |
 
-Somente dado aberto. Nenhuma informação pessoal identificável entra no repositório ou no banco.
+Nenhuma informação pessoal identificável entra no repositório ou no banco. Quase tudo é dado aberto; a
+exceção é o **tipo de deficiência**, que o INEP só disponibiliza pelo SEDAP+ (Serviço de Acesso a Dados
+Protegidos), com privacidade diferencial. Dele o `azupdados` usa apenas agregados por UF e dependência
+administrativa, e só como *proporção*: a escala vem sempre do Censo aberto (ver armadilha 09). As respostas
+brutas da API ficam fora do repositório.
 
 ## Arquitetura
 
@@ -69,6 +74,7 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 06 | Contagem inteira exportada como `"0.0"` quebra o cast direto para inteiro | macro `para_inteiro` | ✅ |
 | 07 | "Número de escolas" depende da definição: em 2024 há 215.545 linhas no arquivo, 181.065 em atividade e 179.286 com matrícula — o INEP divulga cerca de 179,3 mil | — | 🚧 |
 | 08 | Ausência codificada de formas diferentes: até 2021, escolas sem matrícula vêm com `0` nas colunas de quantidade; a partir de 2022, vêm com nulo. Médias por escola mudam de valor só por isso | — | 🚧 |
+| 09 | Números do SEDAP+ têm ruído de privacidade diferencial e, sem filtro, contam o aluno do AEE duas vezes (+30% a +53%) | `assert_sedap_total_proximo_do_censo_aberto` | 🚧 |
 
 ## Reconciliação com números oficiais
 

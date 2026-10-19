@@ -50,3 +50,41 @@ models:
           Matrículas em tempo integral, derivadas como infantil + fundamental + médio.
           O INEP não publica um total de integral para a educação básica; EJA e profissional ficam de fora.
         tests: [sem_sentinela_inep]
+
+  - name: fato_ee_tipo_uf_ano
+    description: >
+      Matrículas da educação especial por tipo (deficiência, TEA, AH/SD). Grão — ano × UF × dependência × tipo.
+      `qt_sedap` é o número protegido com ruído; `qt_estimada` é a proporção do tipo no SEDAP+ aplicada ao
+      total aberto da educação especial (`qt_mat_esp_aberto`). Use `qt_estimada` para análise; ambos servem
+      para tendência, não para célula pequena. Ver docs/armadilhas/09.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [ano_censo, co_uf, tp_dependencia, tipo_deficiencia_sk]
+    columns:
+      - name: fato_ee_tipo_uf_ano_sk
+        tests: [unique, not_null]
+      - name: tipo_deficiencia_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_tipo_deficiencia_inep')
+                field: tipo_deficiencia_sk
+      - name: tp_dependencia
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_dependencia_adm')
+                field: tp_dependencia
+      - name: qt_sedap
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: proporcao_no_grupo
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1

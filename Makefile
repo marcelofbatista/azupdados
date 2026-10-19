@@ -3,7 +3,7 @@ VENV  := .venv
 PY    := $(VENV)/bin/python
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
-.PHONY: setup up down psql bronze-censo dbt-deps dbt-build dbt-docs lint
+.PHONY: setup up down psql bronze-censo sedap-extrair bronze-sedap dbt-deps dbt-build dbt-docs lint
 
 setup:            ## cria o venv e instala dependências
 	python3 -m venv $(VENV)
@@ -23,6 +23,12 @@ psql:             ## abre o psql dentro do container
 
 bronze-censo:     ## make bronze-censo ARQ=<csv> ANO=<ano> [MD5=<arquivo md5 oficial>]
 	set -a; source .env; set +a; $(PY) ingest/bronze_censo_escolar.py --arquivo $(ARQ) --ano $(ANO) $(if $(MD5),--md5-oficial $(MD5),)
+
+sedap-extrair:    ## make sedap-extrair ANOS=2015-2024 (consome orçamento de privacidade do SEDAP+)
+	set -a; source .env; set +a; $(PY) ingest/sedap_tipo_deficiencia.py --anos $(ANOS)
+
+bronze-sedap:     ## carrega na bronze os JSON do SEDAP+ já extraídos
+	set -a; source .env; set +a; $(PY) ingest/bronze_sedap.py
 
 dbt-deps:
 	set -a; source .env; set +a; $(DBT) deps

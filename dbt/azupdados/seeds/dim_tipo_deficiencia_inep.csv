@@ -1,0 +1,11 @@
+tipo_deficiencia_sk,codigo,nome,coluna_inep,grupo,eh_deficiencia,ordem
+1,cegueira,Cegueira,IN_CEGUEIRA,Deficiência visual,true,1
+2,baixa_visao,Baixa visão,IN_BAIXA_VISAO,Deficiência visual,true,2
+3,surdez,Surdez,IN_SURDEZ,Deficiência auditiva,true,3
+4,def_auditiva,Deficiência auditiva,IN_DEF_AUDITIVA,Deficiência auditiva,true,4
+5,surdocegueira,Surdocegueira,IN_SURDOCEGUEIRA,Surdocegueira,true,5
+6,def_fisica,Deficiência física,IN_DEF_FISICA,Deficiência física,true,6
+7,def_intelectual,Deficiência intelectual,IN_DEF_INTELECTUAL,Deficiência intelectual,true,7
+8,def_multipla,Deficiência múltipla,IN_DEF_MULTIPLA,Deficiência múltipla,true,8
+9,autismo_tea,Transtorno do espectro autista,IN_AUTISMO,Transtorno do espectro autista,true,9
+10,superdotacao,Altas habilidades/superdotação,IN_SUPERDOTACAO,Altas habilidades/superdotação,false,10

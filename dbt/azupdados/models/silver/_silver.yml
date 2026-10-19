@@ -33,3 +33,22 @@ models:
       - unicidade_com_nulos:
           arguments:
             colunas: [ano_censo, co_entidade]
+
+  - name: stg_sedap__ee_tipo
+    description: >
+      SEDAP+ tipado, formato longo (ano × UF × dependência × métrica). Valores com ruído de privacidade
+      diferencial — nunca usar em célula pequena. Ver docs/armadilhas/09.
+    tests:
+      - unicidade_com_nulos:
+          arguments:
+            colunas: [ano_censo, co_uf, tp_dependencia, metrica]
+    columns:
+      - name: ano_censo
+        tests: [not_null]
+      - name: co_uf
+        tests: [not_null]
+      - name: metrica
+        tests: [not_null]
+
+  - name: stg_sedap__ee_tipo_estatisticas
+    description: Estatísticas de privacidade diferencial do SEDAP+ (taxa de ruído, IC 95%) por ano e métrica.

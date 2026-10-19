@@ -17,3 +17,12 @@ seeds:
     columns:
       - name: ano_censo
         tests: [unique, not_null]
+  - name: dim_tipo_deficiencia_inep
+    description: >
+      Tipos de deficiência, TEA e altas habilidades/superdotação conforme os indicadores `IN_*` do Censo Escolar.
+      `eh_deficiencia` segue a Lei 12.764/2012 (TEA é deficiência para todos os efeitos legais); AH/SD não é.
+    columns:
+      - name: tipo_deficiencia_sk
+        tests: [unique, not_null]
+      - name: codigo
+        tests: [unique, not_null]

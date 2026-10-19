@@ -1,0 +1,12 @@
+version: 2
+sources:
+  - name: bronze
+    schema: bronze
+    description: Tabelas carregadas pelos scripts de `ingest/`, sem transformação (tudo TEXT).
+    tables:
+      - name: sedap_ee_tipo
+        description: >
+          Respostas do SEDAP+ (Serviço de Acesso a Dados Protegidos do INEP) — matrículas da educação
+          especial por tipo, UF e dependência, com privacidade diferencial. Formato longo.
+      - name: sedap_ee_tipo_estatisticas
+        description: Estatísticas de privacidade diferencial (ruído, IC 95%) por métrica e ano.
