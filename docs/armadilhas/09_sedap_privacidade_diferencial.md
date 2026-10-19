@@ -79,7 +79,23 @@ resposta fica em cache (`_partes/`), para que nenhuma consulta seja paga duas ve
   — todas onde a contagem real é pequena (tipo raro, rede pequena, UF pequena). O valor bruto é mantido:
   cortar em zero antes de somar puxa a soma para cima. `qt_estimada` só é calculada quando o grupo tem
   ao menos 500 matrículas na educação especial (`eh_celula_confiavel`), e aí é cortada em zero.
+- **Grupos suprimidos.** Com `COUNT` e filtro, o SEDAP+ não devolve os grupos muito pequenos (federal com
+  surdocegueira numa UF pequena, por exemplo): de 1.284 valores possíveis por ano, vêm entre 1.174 e 1.209.
+  Grupo ausente quer dizer "pequeno demais para publicar", **não zero** — a fato não cria a linha.
 - A soma dos tipos excede o total da educação especial: um estudante pode ter mais de um tipo.
+
+## Resultado
+
+Com os três cuidados (filtros de AEE e de etapa, `COUNT` por métrica e escala do Censo aberto), a série
+2015–2024 passa em todos os testes de faixa, sem nenhuma célula negativa. Os avisos que restam são de
+grupos com o total a mais de 5% do Censo aberto.
+
+## Por que o número do SEDAP+ não bate com o sistema de gestão das redes
+
+No DF, o TEA da rede estadual em 2024 é 9,1 mil no Censo e cerca de 15,9 mil no sistema de gestão da
+própria rede. Não é ruído (no grão UF × rede o SEDAP+ fica a menos de 1% do Censo aberto); é definição.
+O sistema de gestão pode contar hipótese diagnóstica e estudante só em atendimento complementar, que o
+Censo não conta como matrícula de escolarização. O `azupdados` publica o número **declarado ao INEP**.
 
 ## Pendente
 

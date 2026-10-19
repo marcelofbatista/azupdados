@@ -24,7 +24,7 @@ O `azupdados` resolve isso uma vez, de forma auditável: preserva os arquivos of
 | Censos Demográficos 2010 e 2022 (IBGE) | município × idade × sexo | Brasil | ⏳ |
 | Projeções de população (IBGE, revisão 2024) | UF × idade × sexo × ano | 2000–2070 | ⏳ |
 | Territórios (IBGE) | região, UF, município | Brasil | ⏳ |
-| SEDAP+ (INEP) — educação especial por tipo | UF × dependência × ano | Brasil, 2015–2024 | 🚧 em validação |
+| SEDAP+ (INEP) — educação especial por tipo | UF × dependência × ano | Brasil, 2015–2024 | ✅ carregado; validação contra a Sinopse em andamento |
 
 Nenhuma informação pessoal identificável entra no repositório ou no banco. Quase tudo é dado aberto; a
 exceção é o **tipo de deficiência**, que o INEP só disponibiliza pelo SEDAP+ (Serviço de Acesso a Dados
