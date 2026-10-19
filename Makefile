@@ -3,7 +3,7 @@ VENV  := .venv
 PY    := $(VENV)/bin/python
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
-.PHONY: setup up down psql bronze-censo sedap-extrair bronze-sedap dbt-deps dbt-build dbt-docs lint
+.PHONY: setup up down psql bronze-censo sedap-extrair bronze-sedap dbt-deps dbt-build dbt-build-full dbt-docs lint
 
 setup:            ## cria o venv e instala dependências
 	python3 -m venv $(VENV)
@@ -35,6 +35,9 @@ dbt-deps:
 
 dbt-build:        ## silver + gold + testes
 	set -a; source .env; set +a; $(DBT) build
+
+dbt-build-full:   ## recria seeds e tabelas do zero (necessário quando muda a estrutura de uma seed)
+	set -a; source .env; set +a; $(DBT) build --full-refresh
 
 dbt-docs:
 	set -a; source .env; set +a; $(DBT) docs generate

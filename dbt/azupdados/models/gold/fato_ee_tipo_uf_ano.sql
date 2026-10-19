@@ -7,7 +7,12 @@
   fator quase comum a todas as colunas de um grupo, e a razão tipo ÷ total cancela esse fator.
 
   Um estudante pode ter mais de um tipo: a soma dos tipos excede o total da educação especial.
+
+  Células pequenas: o ruído pode deixar `qt_sedap` NEGATIVO. O valor bruto é mantido (somar células
+  com ruído sem cortar os negativos é o que preserva a média sem viés); `qt_estimada` só é calculada
+  quando o grupo tem ao menos `sedap_min_ee_confiavel` matrículas na educação especial, e é cortada em 0.
 #}
+{%- set minimo = var('sedap_min_ee_confiavel', 500) -%}
 with sedap as (
     select * from {{ ref('stg_sedap__ee_tipo') }}
 ),
@@ -48,8 +53,10 @@ select
     a.qt_mat_esp_aberto,
     a.qt_mat_bas_aberto,
     round(p.qt_sedap::numeric / nullif(ts.total_ee_sedap, 0), 6)               as proporcao_no_grupo,
-    round(p.qt_sedap::numeric / nullif(ts.total_ee_sedap, 0) * a.qt_mat_esp_aberto)::integer
-                                                                                as qt_estimada,
+    ts.total_ee_sedap >= {{ minimo }}                                          as eh_celula_confiavel,
+    case when ts.total_ee_sedap >= {{ minimo }} then
+        greatest(round(p.qt_sedap::numeric / ts.total_ee_sedap * a.qt_mat_esp_aberto), 0)::integer
+    end                                                                         as qt_estimada,
     round(ts.total_matriculas_sedap::numeric / nullif(a.qt_mat_bas_aberto, 0) - 1, 4)
                                                                                 as desvio_total_sedap_vs_aberto,
     'SEDAP+ (INEP) com privacidade diferencial; escala do Censo Escolar aberto'::text as fonte

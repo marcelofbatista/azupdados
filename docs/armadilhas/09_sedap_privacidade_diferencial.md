@@ -38,6 +38,10 @@ multiplicativo comum ao grupo.
   SEDAP+ se afasta mais de 5% do Censo aberto num grupo com 1.000+ matrículas.
 - **Uma consulta por ano.** Repetir a mesma consulta para tirar a média do ruído consome o orçamento de
   privacidade do projeto e contraria o propósito do mecanismo.
+- **Valores negativos.** Na série nacional 2015–2024, 2.145 das 10.700 células por tipo vieram negativas
+  — todas onde a contagem real é pequena (tipo raro, rede pequena, UF pequena). O valor bruto é mantido:
+  cortar em zero antes de somar puxa a soma para cima. `qt_estimada` só é calculada quando o grupo tem
+  ao menos 500 matrículas na educação especial (`eh_celula_confiavel`), e aí é cortada em zero.
 - A soma dos tipos excede o total da educação especial: um estudante pode ter mais de um tipo.
 
 ## Pendente

@@ -78,6 +78,9 @@ models:
                 to: ref('dim_dependencia_adm')
                 field: tp_dependencia
       - name: qt_sedap
+        description: Valor protegido, com ruído. Pode ser negativo em célula pequena — não cortar antes de somar.
+      - name: qt_estimada
+        description: Nulo quando a célula não é confiável (educação especial do grupo abaixo do mínimo).
         tests:
           - dbt_utils.accepted_range:
               arguments:
@@ -88,3 +91,5 @@ models:
               arguments:
                 min_value: 0
                 max_value: 1
+              config:
+                where: "eh_celula_confiavel and qt_sedap >= 0"

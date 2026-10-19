@@ -1,0 +1,8 @@
+grupo_deficiencia_sk,label_curto,label_completo,eh_deficiencia
+1,Visual,Deficiência visual,true
+2,Auditiva,Deficiência auditiva,true
+3,Física,Deficiência física,true
+4,Intelectual,Deficiência intelectual,true
+5,Múltipla,Deficiência múltipla (inclui surdocegueira),true
+6,TEA,Transtorno do espectro autista,true
+8,AHSD,Altas habilidades/superdotação,false

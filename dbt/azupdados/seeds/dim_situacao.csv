@@ -1,0 +1,6 @@
+situacao_sk,codigo_inep,nome_situacao,eh_sucesso,eh_abandono,descricao_pt
+1,2,APROVADO,true,false,Aluno aprovado ao final do ano letivo.
+2,3,REPROVADO,false,false,Aluno reprovado ao final do ano letivo.
+3,4,ABANDONO,false,true,Aluno deixou de frequentar antes do término do ano letivo.
+4,5,FALECIDO,false,false,Aluno falecido durante o ano letivo.
+5,9,SIR,false,false,Sem informação de rendimento.

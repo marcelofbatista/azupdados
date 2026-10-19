@@ -1,0 +1,7 @@
+cor_raca_sk,codigo_curto,nome_canonico,nome_normalizado,codigo_ibge,codigo_educacenso,eh_cor_real,observacoes
+1,BRANCA,Branca,BRANCA,1,1,true,Mesmo código no IBGE e no INEP
+2,PRETA,Preta,PRETA,2,2,true,Mesmo código no IBGE e no INEP
+3,AMARELA,Amarela,AMARELA,3,4,true,IBGE=3 e INEP=4 (códigos trocados entre as fontes)
+4,PARDA,Parda,PARDA,4,3,true,IBGE=4 e INEP=3 (códigos trocados entre as fontes)
+5,INDIGENA,Indígena,INDIGENA,5,5,true,Mesmo código no IBGE e no INEP
+9,ND,Não declarada,NAO DECLARADA,9,0,false,IBGE=9 (ignorado) e INEP=0 (não declarada)

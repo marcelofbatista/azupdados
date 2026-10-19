@@ -1,0 +1,10 @@
+etapa_sk,codigo_curto,nome_etapa,nivel,sub_nivel,idade_tipica,ordem_pedagogica,referencia_ldb,modalidade_sigla,modalidade_nome
+1,EI,Educação Infantil,Educação Básica,EI,0-5 anos,1,LDB Art. 29,REGULAR,Ensino Regular
+2,EF_INI,EF - Anos Iniciais,Educação Básica,EF,6-10 anos,2,LDB Art. 32,REGULAR,Ensino Regular
+3,EF_FIN,EF - Anos Finais,Educação Básica,EF,11-14 anos,3,LDB Art. 32,REGULAR,Ensino Regular
+4,EM,Ensino Médio,Educação Básica,EM,15-17 anos,4,LDB Art. 35,REGULAR,Ensino Regular
+5,EM_INTEG,Ensino Médio Integrado,Educação Básica,EM,15-17 anos,5,LDB Art. 36,REGULAR,Ensino Regular
+6,EJA_EF,EJA - Fundamental,EJA,EF,15+ anos,6,LDB Art. 37,EJA,EJA — Educação de Jovens e Adultos
+7,EJA_EM,EJA - Médio,EJA,EM,18+ anos,7,LDB Art. 37,EJA,EJA — Educação de Jovens e Adultos
+8,EP_TEC,Educação Profissional Técnica,EP,,15+ anos,8,LDB Art. 39,PROFISSIONAL,Educação Profissional
+9,NA,Não Aplicável,Outras,,,99,,OUTRAS,Outras Modalidades

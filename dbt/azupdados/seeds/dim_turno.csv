@@ -1,0 +1,7 @@
+turno_sk,nome_turno,sigla,eh_diurno,descricao_pt
+1,Matutino,M,true,Turno da manhã
+2,Vespertino,V,true,Turno da tarde
+3,Noturno,N,false,Turno da noite
+4,Integral,I,true,Tempo Integral
+5,EAD,EAD,false,Educação a Distância
+6,Não Aplicável,NA,false,Sem turno aplicável (ex: dados agregados Educacenso)

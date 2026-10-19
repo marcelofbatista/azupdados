@@ -21,8 +21,59 @@ seeds:
     description: >
       Tipos de deficiência, TEA e altas habilidades/superdotação conforme os indicadores `IN_*` do Censo Escolar.
       `eh_deficiencia` segue a Lei 12.764/2012 (TEA é deficiência para todos os efeitos legais); AH/SD não é.
+      `grupo_deficiencia_sk` agrupa os tipos nas categorias de `dim_grupo_deficiencia`.
     columns:
       - name: tipo_deficiencia_sk
         tests: [unique, not_null]
       - name: codigo
+        tests: [unique, not_null]
+      - name: grupo_deficiencia_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_grupo_deficiencia')
+                field: grupo_deficiencia_sk
+  - name: dim_grupo_deficiencia
+    description: >
+      Grupos de deficiência usados nas análises (visual, auditiva, física, intelectual, múltipla, TEA, AH/SD).
+      As chaves seguem a dimensão equivalente do DW que deu origem a este projeto, para manter os painéis
+      comparáveis; por isso não há chave 7.
+    columns:
+      - name: grupo_deficiencia_sk
+        tests: [unique, not_null]
+  - name: dim_cor_raca
+    description: >
+      Cor/raça com os códigos das duas fontes. IBGE e INEP usam códigos diferentes para parda e amarela
+      (IBGE 4/3, INEP 3/4) e para a não declaração (IBGE 9, INEP 0). Toda junção entre Censo Escolar e
+      dados do IBGE passa por esta dimensão — nunca pelo código numérico direto (armadilha 10).
+    columns:
+      - name: cor_raca_sk
+        tests: [unique, not_null]
+      - name: codigo_ibge
+        tests: [unique, not_null]
+      - name: codigo_educacenso
+        tests: [unique, not_null]
+  - name: dim_faixa_etaria
+    description: >
+      Faixas etárias. As faixas com `eh_faixa_censo_escolar` casam com as colunas QT_MAT_BAS_<faixa> do
+      Censo Escolar; as de 18 a 29, 30 a 39, 40 a 59 e 60+ servem aos dados populacionais do IBGE.
+      A faixa 10 (18+) é a soma das faixas 6 a 9.
+    columns:
+      - name: faixa_etaria_sk
+        tests: [unique, not_null]
+  - name: dim_etapa
+    description: Etapas e modalidades da educação básica, com o artigo da LDB de referência.
+    columns:
+      - name: etapa_sk
+        tests: [unique, not_null]
+  - name: dim_situacao
+    description: Situação do aluno ao fim do ano letivo (rendimento), com o código do INEP.
+    columns:
+      - name: situacao_sk
+        tests: [unique, not_null]
+  - name: dim_turno
+    description: Turno de funcionamento da turma.
+    columns:
+      - name: turno_sk
         tests: [unique, not_null]

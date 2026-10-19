@@ -1,0 +1,12 @@
+faixa_etaria_sk,nome_faixa,idade_minima,idade_maxima,etapa_tipica,eh_faixa_censo_escolar,descricao
+1,0-3 anos,0,3,Creche,true,Educação infantil — creche
+2,4-5 anos,4,5,Pré-escola,true,Educação infantil — pré-escola
+3,6-10 anos,6,10,EF anos iniciais,true,Idade típica do 1º ao 5º ano
+4,11-14 anos,11,14,EF anos finais,true,Idade típica do 6º ao 9º ano
+5,15-17 anos,15,17,Ensino médio,true,Idade típica do ensino médio
+6,18-29 anos,18,29,EJA / EP / EM tardio,false,Faixa usada com dados populacionais do IBGE
+7,30-39 anos,30,39,EJA / EP,false,Faixa usada com dados populacionais do IBGE
+8,40-59 anos,40,59,EJA,false,Faixa usada com dados populacionais do IBGE
+9,60 anos ou mais,60,999,EJA,false,Faixa usada com dados populacionais do IBGE
+10,18 anos ou mais,18,999,EJA / EP / EM tardio,true,Agregado do Censo Escolar (QT_MAT_BAS_18_MAIS) = faixas 6 a 9
+99,Não informada,-1,-1,,false,Sentinela para registro sem idade
