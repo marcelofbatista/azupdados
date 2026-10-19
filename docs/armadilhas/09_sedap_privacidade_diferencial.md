@@ -9,10 +9,10 @@ coluna, a taxa de ruído e um intervalo de confiança de 95%.
 
 Dois erros aparecem quando se trata o número do SEDAP+ como contagem do Censo:
 
-1. **Contar o estudante duas vezes.** A tabela de matrículas tem um registro para a escolarização e outro
-   para o Atendimento Educacional Especializado (AEE) no contraturno. Sem filtro, os tipos de deficiência
-   saem **30% a 53% acima** da Sinopse Estatística. O filtro `IN_ESPECIAL_EXCLUSIVA IS NOT NULL` deixa só a
-   escolarização.
+1. **Contar o estudante duas vezes.** A tabela de matrículas tem um registro para a escolarização e outros
+   para o Atendimento Educacional Especializado (AEE) e para turmas sem etapa (atividade complementar,
+   itinerário formativo). Sem filtro, os tipos de deficiência saem **30% a 53% acima** da Sinopse. Os filtros
+   `IN_ESPECIAL_EXCLUSIVA IS NOT NULL AND TP_ETAPA_ENSINO IS NOT NULL` deixam só a escolarização.
 2. **Ler o total absoluto como exato.** Mesmo com o filtro certo, o mesmo recorte consultado de duas formas
    dá totais diferentes.
 
@@ -27,6 +27,31 @@ Dois erros aparecem quando se trata o número do SEDAP+ como contagem do Censo:
 Não há população a mais: o desvio é da consulta, não do dado. E ele é **o mesmo em todas as colunas do
 grupo** (+2,6% no total e na educação especial; −1,0% e −1,0% na rede federal), o que indica um fator
 multiplicativo comum ao grupo.
+
+## Por que duas consultas do mesmo recorte dão totais diferentes
+
+Em 2024, a consulta por UF × dependência deu a rede estadual de SP, PR e SC **28% a 39% acima** do Censo
+aberto. A consulta por etapa, somada, ficou a ~1% dele. Em todas as UFs testadas, a diferença entre as
+duas é **2,0 vezes** o número de matrículas sem etapa (`TP_ETAPA_ENSINO` nulo):
+
+| Rede estadual 2024 | Excesso da consulta por UF | Matrículas sem etapa (consulta por etapa) | Razão |
+|---|---|---|---|
+| SC | 216.808 | 104.559 | 2,07 |
+| PR | 353.085 | 177.907 | 1,98 |
+| SP | 1.037.482 | 510.069 | 2,03 |
+| DF | 12.931 | 6.429 | 2,01 |
+
+A explicação é a **limitação de contribuição** da privacidade diferencial. A unidade protegida é o aluno,
+e cada aluno só pode contribuir para um número limitado de grupos. O aluno que tem uma matrícula regular
+e outra numa turma sem etapa (atividade complementar, itinerário formativo em turma própria):
+
+- na consulta por UF, cai duas vezes **no mesmo grupo** e é contado duas vezes;
+- na consulta por etapa, cai em **dois grupos**, e só um deles é mantido — ao acaso, metade das vezes o
+  grupo "sem etapa". Por isso o grupo sem etapa mostra só metade das matrículas extras.
+
+O filtro `TP_ETAPA_ENSINO IS NOT NULL` elimina as matrículas extras antes da agregação. **Lição geral:**
+no SEDAP+, o total de um recorte depende da forma da consulta sempre que um aluno pode cair em mais de
+um grupo. Defina a população com filtros explícitos, não pelo agrupamento.
 
 ## Como o `azupdados` trata
 

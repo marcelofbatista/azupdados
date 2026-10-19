@@ -50,9 +50,12 @@ def montar_sql(ano: int, excluir_aee: bool) -> str:
     somas = ",\n  ".join(
         f"SUM(CASE WHEN {col} = 1 THEN 1 ELSE 0 END) AS {nome}" for nome, col in TIPOS.items()
     )
-    # Matrículas de AEE (atendimento no contraturno) são registros à parte do mesmo aluno.
-    # Incluí-las conta o estudante duas vezes; a Sinopse do INEP conta só a escolarização.
-    filtro = "WHERE IN_ESPECIAL_EXCLUSIVA IS NOT NULL" if excluir_aee else ""
+    # Matrículas de AEE (atendimento no contraturno) e de turmas sem etapa (atividade complementar,
+    # itinerário formativo em turma própria) são registros extras do mesmo aluno. O Censo aberto e a
+    # Sinopse contam só a escolarização. Sem o filtro de etapa, SP, PR e SC saem 28% a 39% acima em 2024.
+    filtro = (
+        "WHERE IN_ESPECIAL_EXCLUSIVA IS NOT NULL AND TP_ETAPA_ENSINO IS NOT NULL" if excluir_aee else ""
+    )
     return (
         f"SELECT CO_UF, TP_DEPENDENCIA,\n"
         f"  COUNT(ID_MATRICULA) AS total_matriculas,\n"
