@@ -113,6 +113,27 @@ make dbt-build                            # silver + gold + testes
 
 PostgreSQL 16 · Python 3.12 · dbt-core + dbt-postgres · PySpark (SAEB) · Docker Compose · GitHub Actions · BigQuery (réplica da gold) · Apache Superset · Power BI (PBIP)
 
+## Do DW estadual para o nacional
+
+O `azupdados` nasceu de um DW estadual de educação inclusiva. Cada fato de lá que vem de fonte pública
+ganha aqui uma versão nacional; as que dependem de sistemas internos de uma rede ficam de fora.
+
+| Tema | No `azupdados` | Fonte | Status |
+|---|---|---|---|
+| Matrículas por etapa, educação especial e tempo integral | `fato_matricula_escola_ano` | Censo Escolar | ✅ |
+| Matrículas por cor/raça, sexo e faixa etária | `fato_matricula_{cor_raca,sexo,faixa_etaria}_escola_ano` | Censo Escolar | ✅ |
+| Educação especial por tipo de deficiência | `fato_ee_tipo_uf_ano` | SEDAP+ ancorado no Censo | ✅ |
+| Infraestrutura da escola | `fato_infraestrutura_escola_ano` | Censo Escolar | ⏳ |
+| Docentes e turmas por escola | `fato_docentes_escola_ano` | Censo Escolar | ⏳ |
+| Rendimento (aprovação, reprovação, abandono) | `fato_rendimento_escola_ano` | Taxas de Rendimento (INEP) | ⏳ |
+| Indicadores educacionais (distorção idade-série, alunos por turma, formação docente, INSE) | `fato_indicadores_inep_escola_ano` | Indicadores Educacionais (INEP) | ⏳ |
+| IDEB | `fato_ideb_{escola,municipio,uf}` | IDEB (INEP) | ⏳ |
+| Proficiência | `fato_saeb_*` | SAEB, com PySpark | ⏳ |
+| População (denominador) | `fato_populacao_*` | IBGE | ⏳ |
+
+Ficam de fora, por não serem públicas ou por serem de uma só rede: sistemas de gestão escolar, censos
+estaduais próprios, formulários internos e pesquisas domiciliares locais.
+
 ## Roadmap
 
 - [ ] **v0.1 — Fundação**: estrutura medalhão, Docker, ingestão bronze do Censo Escolar com md5, primeiros modelos e testes dbt, CI.

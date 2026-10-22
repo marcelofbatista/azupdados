@@ -11,7 +11,12 @@
     'qt_mat_prof', 'qt_mat_eja', 'qt_mat_esp', 'qt_mat_esp_cc', 'qt_mat_esp_ce',
     'qt_mat_inf_int', 'qt_mat_inf_cre_int', 'qt_mat_inf_pre_int',
     'qt_mat_fund_int', 'qt_mat_fund_ai_int', 'qt_mat_fund_af_int', 'qt_mat_med_int',
-    'qt_doc_bas', 'qt_tur_bas'
+    'qt_doc_bas', 'qt_tur_bas',
+    'qt_mat_bas_branca', 'qt_mat_bas_preta', 'qt_mat_bas_parda', 'qt_mat_bas_amarela',
+    'qt_mat_bas_indigena', 'qt_mat_bas_nd',
+    'qt_mat_bas_fem', 'qt_mat_bas_masc',
+    'qt_mat_bas_0_3', 'qt_mat_bas_4_5', 'qt_mat_bas_6_10', 'qt_mat_bas_11_14',
+    'qt_mat_bas_15_17', 'qt_mat_bas_18_mais'
 ] -%}
 
 with uniao as (

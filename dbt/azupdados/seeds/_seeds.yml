@@ -77,3 +77,24 @@ seeds:
     columns:
       - name: turno_sk
         tests: [unique, not_null]
+  - name: dim_regiao
+    description: Grandes regiões do IBGE.
+    columns:
+      - name: co_regiao
+        tests: [unique, not_null]
+  - name: dim_uf
+    description: Unidades da Federação com código IBGE (o mesmo usado pelo INEP).
+    columns:
+      - name: co_uf
+        tests: [unique, not_null]
+      - name: co_regiao
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_regiao')
+                field: co_regiao
+  - name: dim_sexo
+    description: Sexo, com os códigos do INEP e do IBGE (iguais nas duas fontes).
+    columns:
+      - name: sexo_sk
+        tests: [unique, not_null]

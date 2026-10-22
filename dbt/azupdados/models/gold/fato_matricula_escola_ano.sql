@@ -6,6 +6,7 @@ select
     {{ dbt_utils.generate_surrogate_key(['s.co_entidade', 's.ano_censo']) }} as fato_matricula_escola_ano_sk,
     e.escola_sk,
     s.ano_censo,
+    s.co_uf,
     s.co_municipio,
     s.tp_dependencia,
     s.tp_localizacao,

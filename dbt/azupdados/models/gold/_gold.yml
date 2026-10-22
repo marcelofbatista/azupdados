@@ -43,6 +43,20 @@ models:
               arguments:
                 to: ref('dim_dependencia_adm')
                 field: tp_dependencia
+      - name: co_uf
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_uf')
+                field: co_uf
+      - name: co_municipio
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipio')
+                field: co_municipio
       - name: qt_mat_bas
         tests: [sem_sentinela_inep]
       - name: qt_mat_integral_inf_fund_med
@@ -93,3 +107,67 @@ models:
                 max_value: 1
               config:
                 where: "eh_celula_confiavel and qt_sedap >= 0"
+
+  - name: dim_municipio
+    description: Municípios pelo código IBGE de 7 dígitos (o mesmo usado pelo INEP), com UF e região.
+    columns:
+      - name: co_municipio
+        tests: [unique, not_null]
+      - name: co_uf
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_uf')
+                field: co_uf
+
+  - name: fato_matricula_cor_raca_escola_ano
+    description: >
+      Matrículas da educação básica por cor/raça. Grão — escola × ano × cor/raça. O INEP publica cada recorte
+      separadamente (marginais): não há cruzamento cor/raça × outro recorte no microdado aberto.
+    columns:
+      - name: fato_matricula_cor_raca_escola_ano_sk
+        tests: [unique, not_null]
+      - name: cor_raca_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_cor_raca')
+                field: cor_raca_sk
+      - name: qt_matriculas
+        tests: [sem_sentinela_inep]
+
+  - name: fato_matricula_sexo_escola_ano
+    description: >
+      Matrículas da educação básica por sexo. Grão — escola × ano × sexo. O INEP publica cada recorte
+      separadamente (marginais): não há cruzamento sexo × outro recorte no microdado aberto.
+    columns:
+      - name: fato_matricula_sexo_escola_ano_sk
+        tests: [unique, not_null]
+      - name: sexo_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_sexo')
+                field: sexo_sk
+      - name: qt_matriculas
+        tests: [sem_sentinela_inep]
+
+  - name: fato_matricula_faixa_etaria_escola_ano
+    description: >
+      Matrículas da educação básica por faixa etária. Grão — escola × ano × faixa etária. O INEP publica cada recorte
+      separadamente (marginais): não há cruzamento faixa etária × outro recorte no microdado aberto.
+    columns:
+      - name: fato_matricula_faixa_etaria_escola_ano_sk
+        tests: [unique, not_null]
+      - name: faixa_etaria_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_faixa_etaria')
+                field: faixa_etaria_sk
+      - name: qt_matriculas
+        tests: [sem_sentinela_inep]
