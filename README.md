@@ -77,8 +77,8 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 07 | "Número de escolas" depende da definição: em 2024 há 215.545 linhas no arquivo, 181.065 em atividade e 179.286 com matrícula — o INEP divulga cerca de 179,3 mil | — | 🚧 |
 | 08 | Ausência codificada de formas diferentes: até 2021, escolas sem matrícula vêm com `0` nas colunas de quantidade; a partir de 2022, vêm com nulo. Médias por escola mudam de valor só por isso | — | 🚧 |
 | 09 | Números do SEDAP+ têm ruído de privacidade diferencial (inclusive valores negativos em célula pequena) e, sem filtro, contam o aluno do AEE duas vezes (+30% a +53%) | `assert_sedap_total_proximo_do_censo_aberto` | 🚧 |
-| 11 | Planilhas do IDEB: cabeçalho técnico depois de linhas de título, colunas de identificação sem nome e nome de coluna repetido (o indicador de rendimento de 2025 sai rotulado como 2023) | `unicidade_com_nulos` na silver | ✅ |
 | 10 | IBGE e INEP trocam os códigos de parda e amarela (4/3 × 3/4): juntar pelo número inverte os grupos | `unique` nos dois códigos de `dim_cor_raca` | ✅ |
+| 11 | Planilhas do IDEB: cabeçalho técnico depois de linhas de título, colunas de identificação sem nome e nome de coluna repetido (o indicador de rendimento de 2025 sai rotulado como 2023) | `unicidade_com_nulos` na silver | ✅ |
 
 ## Reconciliação com números oficiais
 

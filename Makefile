@@ -37,8 +37,8 @@ bronze-ideb:      ## carrega na bronze as planilhas de divulgação do IDEB 2025
 dbt-deps:
 	set -a; source .env; set +a; $(DBT) deps
 
-dbt-build:        ## silver + gold + testes
-	set -a; source .env; set +a; $(DBT) build --threads $(DBT_THREADS)
+dbt-build:        ## silver + gold + testes  (só uma parte: make dbt-build SEL='+fato_ideb_escola_ano')
+	set -a; source .env; set +a; $(DBT) build --threads $(DBT_THREADS) $(if $(SEL),--select $(SEL),)
 
 dbt-build-full:   ## recria seeds e tabelas do zero (necessário quando muda a estrutura de uma seed)
 	set -a; source .env; set +a; $(DBT) build --full-refresh --threads $(DBT_THREADS)
