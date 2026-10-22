@@ -123,8 +123,9 @@ ganha aqui uma versão nacional; as que dependem de sistemas internos de uma red
 | Matrículas por etapa, educação especial e tempo integral | `fato_matricula_escola_ano` | Censo Escolar | ✅ |
 | Matrículas por cor/raça, sexo e faixa etária | `fato_matricula_{cor_raca,sexo,faixa_etaria}_escola_ano` | Censo Escolar | ✅ |
 | Educação especial por tipo de deficiência | `fato_ee_tipo_uf_ano` | SEDAP+ ancorado no Censo | ✅ |
-| Infraestrutura da escola | `fato_infraestrutura_escola_ano` | Censo Escolar | ⏳ |
-| Docentes e turmas por escola | `fato_docentes_escola_ano` | Censo Escolar | ⏳ |
+| Infraestrutura da escola | `fato_infraestrutura_escola_ano` | Censo Escolar | ✅ |
+| Docentes e turmas por escola | `fato_docentes_turmas_escola_ano` | Censo Escolar | ✅ |
+| Profissionais não docentes (psicólogo, intérprete de Libras...) | `fato_profissionais_escola_ano` | Censo Escolar | ✅ |
 | Rendimento (aprovação, reprovação, abandono) | `fato_rendimento_escola_ano` | Taxas de Rendimento (INEP) | ⏳ |
 | Indicadores educacionais (distorção idade-série, alunos por turma, formação docente, INSE) | `fato_indicadores_inep_escola_ano` | Indicadores Educacionais (INEP) | ⏳ |
 | IDEB | `fato_ideb_{escola,municipio,uf}` | IDEB (INEP) | ⏳ |

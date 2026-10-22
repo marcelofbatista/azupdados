@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 VENV  := .venv
 PY    := $(VENV)/bin/python
+DBT_THREADS ?= 2
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
 .PHONY: setup up down psql bronze-censo sedap-extrair bronze-sedap dbt-deps dbt-build dbt-build-full dbt-docs lint
@@ -34,10 +35,10 @@ dbt-deps:
 	set -a; source .env; set +a; $(DBT) deps
 
 dbt-build:        ## silver + gold + testes
-	set -a; source .env; set +a; $(DBT) build
+	set -a; source .env; set +a; $(DBT) build --threads $(DBT_THREADS)
 
 dbt-build-full:   ## recria seeds e tabelas do zero (necessário quando muda a estrutura de uma seed)
-	set -a; source .env; set +a; $(DBT) build --full-refresh
+	set -a; source .env; set +a; $(DBT) build --full-refresh --threads $(DBT_THREADS)
 
 dbt-docs:
 	set -a; source .env; set +a; $(DBT) docs generate

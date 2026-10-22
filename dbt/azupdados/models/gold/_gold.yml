@@ -171,3 +171,72 @@ models:
                 field: faixa_etaria_sk
       - name: qt_matriculas
         tests: [sem_sentinela_inep]
+
+  - name: fato_infraestrutura_escola_ano
+    description: >
+      Infraestrutura da escola (água, energia, esgoto, salas, biblioteca, laboratórios, quadra, internet, acessibilidade, sala de AEE). Grão — escola × ano. Nulo = não informado ou indicador inexistente naquele ano.
+    columns:
+      - name: fato_infraestrutura_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_escola')
+                field: escola_sk
+      - name: co_uf
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_uf')
+                field: co_uf
+      - name: qt_salas_utilizadas
+        description: Contagem física de salas em uso, não por turno.
+        tests: [sem_sentinela_inep]
+
+  - name: fato_docentes_turmas_escola_ano
+    description: >
+      Docentes e turmas por etapa. Grão — escola × ano. O docente é contado em cada etapa em que atua.
+    columns:
+      - name: fato_docentes_turmas_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_escola')
+                field: escola_sk
+      - name: co_uf
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_uf')
+                field: co_uf
+      - name: qt_doc_bas
+        tests: [sem_sentinela_inep]
+      - name: qt_tur_bas
+        tests: [sem_sentinela_inep]
+
+  - name: fato_profissionais_escola_ano
+    description: >
+      Profissionais escolares não docentes. Grão — escola × ano.
+    columns:
+      - name: fato_profissionais_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_escola')
+                field: escola_sk
+      - name: co_uf
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_uf')
+                field: co_uf
+      - name: qt_prof_psicologo
+        tests: [sem_sentinela_inep]

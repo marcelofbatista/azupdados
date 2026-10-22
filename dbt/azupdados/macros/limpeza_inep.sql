@@ -16,3 +16,10 @@
         else {{ para_inteiro(coluna) }}
     end
 {%- endmacro %}
+
+{#
+  Indicadores IN_* do INEP: 1 = sim, 0 = não, vazio = não informado. Qualquer outro valor vira nulo.
+#}
+{% macro para_booleano(coluna) -%}
+    case trim({{ coluna }}) when '1' then true when '0' then false end
+{%- endmacro %}
