@@ -78,8 +78,8 @@ def abrir_planilha(arq: Path) -> tuple[bytes, str, bool | None]:
         dados = z.read(xlsx[0])
         oficial = md5_oficiais(z).get(Path(xlsx[0]).name.lower())
         confere = None if oficial is None else hashlib.md5(dados).hexdigest() == oficial
-        if confere is False:
-            sys.exit(f"{arq}/{xlsx[0]}: md5 NÃO confere com o oficial do INEP — arquivo corrompido?")
+        # Divergência não para a carga: o INEP às vezes regera a planilha e não o .txt. Fica registrada em
+        # meta.carga_arquivo.md5_oficial_ok = false e é listada no fim da execução.
         return dados, xlsx[0], confere
 
 
@@ -121,12 +121,21 @@ def ler(dados: bytes) -> tuple[list[str], list[str], list[list[str | None]], str
         rotulos = [" / ".join(p[-3:]) for p in partes]
 
         pos_id = next(i for i, n in enumerate(nomes) if n.split("__")[0] in CHAVES_ESCOLA)
-        dados_linhas = []
+        dados_linhas, recusadas = [], []
         for linha in linhas:
             valores = [texto(c) for c in linha][: len(nomes)]
             valores += [None] * (len(nomes) - len(valores))
-            if valores[pos_id] and valores[pos_id].isdigit():  # descarta notas de rodapé
+            cod = valores[pos_id]
+            if cod and re.fullmatch(r"\d{8}(\.0+)?", cod):  # código INEP de escola; o resto é rodapé
+                valores[pos_id] = cod.split(".")[0]
                 dados_linhas.append(valores)
+            elif any(valores):
+                recusadas.append(valores)
+        if len(dados_linhas) < 1000:  # algo errado: mostrar o que foi recusado em vez de seguir calado
+            print(f"      ATENÇÃO: {len(dados_linhas)} linhas aceitas, {len(recusadas)} recusadas. "
+                  f"Cabeçalho: {nomes[:12]}  coluna-chave: {nomes[pos_id]} (posição {pos_id + 1})")
+            for r in recusadas[:3]:
+                print(f"      recusada: {[repr(v) for v in r[:12]]}")
         return nomes, rotulos, dados_linhas, ws.title
     sys.exit("Cabeçalho técnico (código da escola) não encontrado em nenhuma aba")
 
@@ -146,7 +155,7 @@ def arquivos(pasta: Path, sigs: set[str], anos: set[int] | None) -> list[tuple[s
         sig = SIGLA_DA_PASTA[sub.name]
         if sig not in sigs:
             continue
-        for arq in sorted(sub.glob("*")):
+        for arq in sorted(sub.glob("*"), key=lambda a: (ano_de.get(a.name, 0), a.name)):
             if arq.suffix.lower() not in (".zip", ".xlsx") or arq.name.endswith(".part"):
                 continue
             ano = ano_de.get(arq.name)
@@ -223,7 +232,7 @@ def main() -> None:
     if not lista:
         sys.exit(f"Nenhum arquivo de indicador em {args.pasta}")
 
-    conn = None
+    conn, divergentes, poucas = None, [], []
     if not args.so_cabecalhos:
         import psycopg
 
@@ -233,7 +242,11 @@ def main() -> None:
             dados, interno, confere = abrir_planilha(arq)
             nomes, rotulos, linhas, aba = ler(dados)
             md5 = {True: "md5 ok", False: "md5 FALHOU", None: "sem md5 oficial"}[confere]
-            print(f"{sig:4} {ano}  {len(linhas):>7,} escolas × {len(nomes):>3} col  [{md5}]  aba '{aba}'")
+            print(f"{sig:4} {ano}  {len(linhas):>7,} escolas × {len(nomes):>3} col  [{md5}]  aba '{aba}'", flush=True)
+            if confere is False:
+                divergentes.append(f"{sig} {ano} ({arq.name})")
+            if len(linhas) < 1000:
+                poucas.append(f"{sig} {ano}")
             if args.so_cabecalhos:
                 print("      " + " ".join(nomes))
                 continue
@@ -241,6 +254,10 @@ def main() -> None:
     finally:
         if conn is not None:
             conn.close()
+    if divergentes:
+        print(f"\nmd5 divergente do .txt oficial (carregados mesmo assim, conferir): {divergentes}")
+    if poucas:
+        print(f"\nArquivos com menos de 1.000 escolas (NÃO usar até explicar): {poucas}")
 
 
 if __name__ == "__main__":
