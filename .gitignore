@@ -9,6 +9,7 @@ data/landing/*
 data/bronze/*
 !data/landing/.gitkeep
 !data/bronze/.gitkeep
+data/certs/
 
 # python
 .venv/
