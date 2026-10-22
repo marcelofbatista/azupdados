@@ -28,6 +28,7 @@ import argparse
 import csv
 import hashlib
 import io
+import itertools
 import os
 import re
 import sys
@@ -36,7 +37,7 @@ from pathlib import Path
 
 import openpyxl
 
-CHAVES_ESCOLA = {"co_entidade", "pk_cod_entidade", "co_escola", "id_escola"}
+CHAVES_ESCOLA = {"co_entidade", "pk_cod_entidade", "co_escola", "id_escola", "cod_escola", "cod_entidade"}
 SIGLA_DA_PASTA = {"rendimento": "REND", "tdi": "TDI", "atu": "ATU", "had": "HAD", "afd": "AFD",
                   "ird": "IRD", "ied": "IED", "icg": "ICG", "inse": "INSE"}
 
@@ -83,7 +84,7 @@ def abrir_planilha(arq: Path) -> tuple[bytes, str, bool | None]:
         return dados, xlsx[0], confere
 
 
-def ler(dados: bytes) -> tuple[list[str], list[str], list[list[str | None]], str]:
+def ler(dados: bytes) -> tuple[list[str], list[str], list[list[str | None]], str] | None:
     """(nomes técnicos, rótulos, linhas de dados, aba). Usa a primeira aba que tem o cabeçalho técnico."""
     wb = openpyxl.load_workbook(io.BytesIO(dados), read_only=True, data_only=True)
     for ws in wb.worksheets:
@@ -120,11 +121,24 @@ def ler(dados: bytes) -> tuple[list[str], list[str], list[list[str | None]], str
                     partes[i].append(atual)
         rotulos = [" / ".join(p[-3:]) for p in partes]
 
-        pos_id = next(i for i, n in enumerate(nomes) if n.split("__")[0] in CHAVES_ESCOLA)
-        dados_linhas, recusadas = [], []
+        # Lê um lote inicial antes de decidir a coluna-chave: em alguns arquivos o INEP troca a ORDEM dos
+        # rótulos de identificação (ATU 2016–2018: cabeçalho diz no_municipio, co_municipio, no_entidade,
+        # co_entidade, mas os dados vêm código antes do nome). Armadilha 12.
+        lote = []
         for linha in linhas:
             valores = [texto(c) for c in linha][: len(nomes)]
             valores += [None] * (len(nomes) - len(valores))
+            lote.append(valores)
+            if len(lote) >= 500:
+                break
+        nomes = corrigir_identificacao(nomes, lote)
+
+        pos_id = next(i for i, n in enumerate(nomes) if n.split("__")[0] in CHAVES_ESCOLA)
+        dados_linhas, recusadas = [], []
+
+        resto = ([texto(c) for c in linha] for linha in linhas)
+        for valores in itertools.chain(lote, resto):
+            valores = valores[: len(nomes)] + [None] * (len(nomes) - len(valores))
             cod = valores[pos_id]
             if cod and re.fullmatch(r"\d{8}(\.0+)?", cod):  # código INEP de escola; o resto é rodapé
                 valores[pos_id] = cod.split(".")[0]
@@ -137,7 +151,40 @@ def ler(dados: bytes) -> tuple[list[str], list[str], list[list[str | None]], str
             for r in recusadas[:3]:
                 print(f"      recusada: {[repr(v) for v in r[:12]]}")
         return nomes, rotulos, dados_linhas, ws.title
-    sys.exit("Cabeçalho técnico (código da escola) não encontrado em nenhuma aba")
+
+    # nenhuma aba com cabeçalho reconhecível: mostrar o topo de cada aba para diagnóstico
+    for ws in wb.worksheets:
+        print(f"      SEM CABEÇALHO — aba '{ws.title}', primeiras linhas:")
+        for i, linha in enumerate(ws.iter_rows(max_row=15, values_only=True), 1):
+            vals = [str(v)[:20] for v in linha if v is not None]
+            if vals:
+                print(f"        {i:2d}: {' | '.join(vals[:12])}")
+    return None
+
+
+PARES_ID = [  # (nomes possíveis do código, nomes possíveis do nome, regex do código)
+    ({"co_entidade", "pk_cod_entidade", "co_escola", "id_escola"}, {"no_entidade", "nome_escola", "no_escola"}, r"\d{8}"),
+    ({"co_municipio", "pk_cod_municipio"}, {"no_municipio", "nome_municipio"}, r"\d{7}"),
+]
+
+
+def corrigir_identificacao(nomes: list[str], amostra: list[list[str | None]]) -> list[str]:
+    """Troca os rótulos de código e nome quando o CONTEÚDO desmente o cabeçalho (ver armadilha 12)."""
+    nomes = list(nomes)
+
+    def taxa(pos, padrao):
+        vals = [r[pos] for r in amostra if r[pos]]
+        return sum(bool(re.fullmatch(padrao + r"(\.0+)?", v)) for v in vals) / len(vals) if vals else 0.0
+
+    for codigos, rotulos_nome, padrao in PARES_ID:
+        pc = next((i for i, n in enumerate(nomes) if n in codigos), None)
+        pn = next((i for i, n in enumerate(nomes) if n in rotulos_nome), None)
+        if pc is None or pn is None:
+            continue
+        if taxa(pc, padrao) < 0.5 and taxa(pn, padrao) > 0.9:
+            print(f"      CORREÇÃO: dados contradizem o cabeçalho — '{nomes[pc]}' e '{nomes[pn]}' trocados")
+            nomes[pc], nomes[pn] = nomes[pn], nomes[pc]
+    return nomes
 
 
 def ano_do_manifesto(pasta: Path) -> dict[str, int]:
@@ -232,7 +279,7 @@ def main() -> None:
     if not lista:
         sys.exit(f"Nenhum arquivo de indicador em {args.pasta}")
 
-    conn, divergentes, poucas = None, [], []
+    conn, divergentes, poucas, sem_cabecalho = None, [], [], []
     if not args.so_cabecalhos:
         import psycopg
 
@@ -240,7 +287,12 @@ def main() -> None:
     try:
         for sig, ano, arq in lista:
             dados, interno, confere = abrir_planilha(arq)
-            nomes, rotulos, linhas, aba = ler(dados)
+            lido = ler(dados)
+            if lido is None:
+                print(f"{sig:4} {ano}  PULADO: cabeçalho técnico não encontrado ({arq.name}/{interno})")
+                sem_cabecalho.append(f"{sig} {ano}")
+                continue
+            nomes, rotulos, linhas, aba = lido
             md5 = {True: "md5 ok", False: "md5 FALHOU", None: "sem md5 oficial"}[confere]
             print(f"{sig:4} {ano}  {len(linhas):>7,} escolas × {len(nomes):>3} col  [{md5}]  aba '{aba}'", flush=True)
             if confere is False:
@@ -256,6 +308,8 @@ def main() -> None:
             conn.close()
     if divergentes:
         print(f"\nmd5 divergente do .txt oficial (carregados mesmo assim, conferir): {divergentes}")
+    if sem_cabecalho:
+        print(f"\nArquivos PULADOS sem cabeçalho reconhecível: {sem_cabecalho}")
     if poucas:
         print(f"\nArquivos com menos de 1.000 escolas (NÃO usar até explicar): {poucas}")
 
