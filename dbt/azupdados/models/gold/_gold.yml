@@ -240,3 +240,96 @@ models:
                 field: co_uf
       - name: qt_prof_psicologo
         tests: [sem_sentinela_inep]
+
+  - name: fato_ideb_escola_ano
+    description: >
+      IDEB por escola. Grão — escola × etapa × edição (anos iniciais e finais desde 2005, ensino médio desde
+      2017). Medidas: taxa de aprovação da etapa, indicador de rendimento (P), notas padronizadas do SAEB,
+      nota média padronizada (N), IDEB observado e meta (as metas só vão até 2021).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [id_escola, etapa_sk, ano_ideb]
+    columns:
+      - name: fato_ideb_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: Nulo para escolas que só aparecem em edições anteriores ao primeiro Censo carregado.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_escola')
+                field: escola_sk
+      - name: etapa_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_etapa')
+                field: etapa_sk
+      - name: co_uf
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_uf')
+                field: co_uf
+      - name: ideb
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 10
+
+  - name: fato_ideb_municipio_ano
+    description: IDEB por município e rede. Grão — município × rede × etapa × edição.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [co_municipio, rede, etapa_sk, ano_ideb]
+    columns:
+      - name: fato_ideb_municipio_ano_sk
+        tests: [unique, not_null]
+      - name: co_municipio
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_municipio')
+                field: co_municipio
+      - name: rede
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_rede_ideb')
+                field: rede
+      - name: ideb
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 10
+
+  - name: fato_ideb_agregado_ano
+    description: >
+      IDEB do Brasil, das grandes regiões e das UFs. Grão — território × rede × etapa × edição.
+      `nivel` diz se a linha é Brasil, região ou UF; nome sem correspondência nas dimensões fica com nível nulo.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [no_territorio, rede, etapa_sk, ano_ideb]
+    columns:
+      - name: fato_ideb_agregado_ano_sk
+        tests: [unique, not_null]
+      - name: nivel
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['brasil', 'regiao', 'uf']
+      - name: rede
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_rede_ideb')
+                field: rede

@@ -1,0 +1,7 @@
+rede,tp_dependencia,eh_publica,eh_agregado
+Federal,1,true,false
+Estadual,2,true,false
+Municipal,3,true,false
+Privada,4,false,false
+Pública,,true,true
+Total,,,true

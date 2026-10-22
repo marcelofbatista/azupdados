@@ -23,3 +23,14 @@
 {% macro para_booleano(coluna) -%}
     case trim({{ coluna }}) when '1' then true when '0' then false end
 {%- endmacro %}
+
+{# Normaliza nomes para comparar textos de fontes diferentes (sem acento, minúsculo, sem espaços extras). #}
+{% macro normalizar_nome(coluna) -%}
+    lower(trim(translate({{ coluna }}, 'áàâãäéèêëíìîïóòôõöúùûüçÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ',
+                                      'aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC')))
+{%- endmacro %}
+
+{# Etapa do IDEB (sufixo da tabela bronze) → chave de dim_etapa. #}
+{% macro etapa_ideb_sk(coluna) -%}
+    case {{ coluna }} when 'ai' then 2 when 'af' then 3 when 'em' then 4 end
+{%- endmacro %}

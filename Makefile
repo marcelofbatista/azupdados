@@ -4,7 +4,7 @@ PY    := $(VENV)/bin/python
 DBT_THREADS ?= 2
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
-.PHONY: setup up down psql bronze-censo sedap-extrair bronze-sedap dbt-deps dbt-build dbt-build-full dbt-docs lint
+.PHONY: setup up down psql bronze-censo sedap-extrair bronze-sedap bronze-ideb dbt-deps dbt-build dbt-build-full dbt-docs lint
 
 setup:            ## cria o venv e instala dependências
 	python3 -m venv $(VENV)
@@ -30,6 +30,9 @@ sedap-extrair:    ## make sedap-extrair ANOS=2015-2024 (consome orçamento de pr
 
 bronze-sedap:     ## carrega na bronze os JSON do SEDAP+ já extraídos
 	set -a; source .env; set +a; $(PY) ingest/bronze_sedap.py
+
+bronze-ideb:      ## carrega na bronze as planilhas de divulgação do IDEB 2025 (série desde 2005)
+	set -a; source .env; set +a; $(PY) ingest/bronze_ideb.py
 
 dbt-deps:
 	set -a; source .env; set +a; $(DBT) deps

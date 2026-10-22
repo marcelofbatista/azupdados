@@ -52,3 +52,22 @@ models:
 
   - name: stg_sedap__ee_tipo_estatisticas
     description: Estatísticas de privacidade diferencial do SEDAP+ (taxa de ruído, IC 95%) por ano e métrica.
+
+  - name: stg_ideb__escola
+    description: IDEB por escola em formato longo (escola × etapa × métrica × edição). Ver armadilha 11.
+    tests:
+      - unicidade_com_nulos:
+          arguments:
+            colunas: [id_escola, etapa, metrica, sufixo, ano_ideb]
+  - name: stg_ideb__municipio
+    description: IDEB por município e rede em formato longo.
+    tests:
+      - unicidade_com_nulos:
+          arguments:
+            colunas: [co_municipio, rede, etapa, metrica, sufixo, ano_ideb]
+  - name: stg_ideb__agregado
+    description: IDEB do Brasil, regiões e UFs em formato longo; território identificado pelo nome.
+    tests:
+      - unicidade_com_nulos:
+          arguments:
+            colunas: [no_territorio, rede, etapa, metrica, sufixo, ano_ideb]

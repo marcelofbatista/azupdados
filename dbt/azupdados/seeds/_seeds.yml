@@ -98,3 +98,12 @@ seeds:
     columns:
       - name: sexo_sk
         tests: [unique, not_null]
+  - name: dim_rede_ideb
+    description: >
+      Redes como aparecem nas planilhas do IDEB. "Pública" e "Total" são agregados que o INEP publica
+      prontos (não somar com as redes de origem).
+    columns:
+      - name: rede
+        tests: [unique, not_null]
+  - name: ref_ideb_oficial
+    description: IDEB divulgado pelo INEP, usado como oráculo de reconciliação. Cada linha cita a publicação.
