@@ -69,8 +69,26 @@ def VARIANTES(sig: str, ano: int) -> list[str]:
     return [f"{pasta}/{n}" for pasta in (ano, ano + 1) for n in nomes]
 
 
-ANOS_PADRAO = {"INSE": [2011, 2013, 2015, 2017, 2019, 2021, 2023]}
-ANOS_GERAL = list(range(2007, 2026))
+# Anos fora do padrão de nome, copiados do site do INEP (out/2026). Em 2015 cada indicador tinha subpasta
+# temática; o INSE 2011–2013 é um arquivo único (registrado como 2013). INSE 2013 e 2015 usam metodologia
+# anterior, NÃO comparável com 2019+ (aviso do INEP): a silver marca isso, a landing guarda o original.
+CAMINHOS_EXPLICITOS = {
+    ("TDI", 2015): "2015/distorcao_idade_serie/tdi_escolas_2015.zip",
+    ("REND", 2015): "2015/taxa_rendimento/tx_rendimento_escolas_2015.zip",
+    ("REND", 2016): "2016/TAXA_REND_2016_ESCOLAS.zip",
+    ("REND", 2017): "2017/TAXA_REND_2017_ESCOLAS.zip",
+    ("ATU", 2015): "2015/alunos_turma/media_alunos_turma_escolas_2015.zip",
+    ("HAD", 2015): "2015/horas_aula_diaria/horas_aula_escolas_2015.zip",
+    ("AFD", 2015): "2015/adequacao_formacao_docente/adequacao_formacao_docente_escolas_2015.zip",
+    ("IRD", 2015): "2015/regularidade_corpo_docente/regularidade_corpo_docente_escolas_2015.zip",
+    ("IED", 2015): "2015/esforco_docente/esforco_docente_escolas_2015.zip",
+    ("ICG", 2015): "2015/complexidade_gestao_escola/complexidade_gestao_escola_escolas_2015.zip",
+    ("INSE", 2015): "2015/nivel_socioeconomico/Indicador_Inse_2015.zip",
+    ("INSE", 2013): "2011_2013/nivel_socioeconomico/Indicador_INSE_por_Escola.zip",
+}
+
+ANOS_PADRAO = {"INSE": [2013, 2015, 2019, 2021, 2023]}
+ANOS_GERAL = list(range(2015, 2026))  # série do projeto; antes de 2015 o INEP não publica por escola neste formato
 
 
 def contexto_ssl() -> ssl.SSLContext:
@@ -111,7 +129,10 @@ def sondar_url(url: str) -> tuple[str, int | None, str | None]:
 
 def localizar(sig: str, ano: int) -> dict:
     erros = []
-    for caminho in VARIANTES(sig, ano):
+    candidatos = VARIANTES(sig, ano)
+    if (sig, ano) in CAMINHOS_EXPLICITOS:
+        candidatos = [CAMINHOS_EXPLICITOS[(sig, ano)], *candidatos]
+    for caminho in candidatos:
         status, tam, erro = sondar_url(f"{BASE}/{caminho}")
         if status == "ok":
             return {"sig": sig, "ano": ano, "caminho": caminho, "bytes": tam, "erros": erros}
@@ -176,7 +197,7 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--sondar", action="store_true", help="só mostra o que existe, sem baixar")
     p.add_argument("--indicadores", default=",".join(PASTA), help="ex.: TDI,REND (padrão: todos)")
-    p.add_argument("--anos", help="ex.: 2015-2025 | 2019,2021 (padrão: 2007–2025; INSE: edições do SAEB)")
+    p.add_argument("--anos", help="ex.: 2015-2025 | 2019,2021 (padrão: 2015–2025; INSE: 2013, 2015, 2019, 2021, 2023)")
     args = p.parse_args()
 
     CTX = contexto_ssl()
