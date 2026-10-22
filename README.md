@@ -99,6 +99,17 @@ Todo total calculado é conferido contra o número publicado pelo INEP, registra
 | 2023 | 47.304.632 | 47.304.632 | 0 |
 | 2024 | 47.088.922 | 47.088.922 | 0 |
 
+### IDEB
+
+| Etapa | IDEB Brasil 2023 (INEP) | Calculado no `azupdados` |
+|---|---|---|
+| Anos iniciais | 6,0 | 6,0 |
+| Anos finais | 5,0 | 5,0 |
+| Ensino médio | 4,3 | 4,3 |
+
+O teste `assert_ideb_brasil_bate_com_inep` compara com uma casa decimal. Foi ele que encontrou a coluna
+sem nome técnico na planilha de 2025 (armadilha 11).
+
 ## Como rodar
 
 ```bash
