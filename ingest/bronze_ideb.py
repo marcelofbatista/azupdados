@@ -72,6 +72,30 @@ def texto(v) -> str | None:
     return s or None
 
 
+PADRAO_VL = re.compile(r"^vl_([a-z_]+?)_(\d{4})(_[a-z0-9][a-z0-9_]*)?$")
+
+
+def preencher_buracos(nomes: list[str]) -> list[str]:
+    """Coluna sem nome entre duas da mesma métrica recebe a edição que falta na sequência.
+
+    Ex.: no arquivo de 2025 (Brasil, anos finais), o IDEB de 2023 vem sem cabeçalho técnico, entre
+    VL_OBSERVADO_2021 e VL_OBSERVADO_2025. Só preenche quando os dois vizinhos confirmam: mesma métrica,
+    mesmo sufixo, anos separados por 4. Caso contrário, deixa col_<n> e a coluna fica fora da silver.
+    """
+    saida = list(nomes)
+    for i in range(1, len(nomes) - 1):
+        if not nomes[i].startswith("col_"):
+            continue
+        antes, depois = PADRAO_VL.match(nomes[i - 1]), PADRAO_VL.match(nomes[i + 1])
+        if (antes and depois and antes[1] == depois[1] and antes[3] == depois[3]
+                and int(depois[2]) - int(antes[2]) == 4):
+            novo = f"vl_{antes[1]}_{int(antes[2]) + 2}{antes[3] or ''}"
+            if novo not in saida:
+                print(f"    coluna sem nome na posição {i + 1} → {novo} (entre {nomes[i - 1]} e {nomes[i + 1]})")
+                saida[i] = novo
+    return saida
+
+
 def ler_aba(ws, nivel: str) -> tuple[list[str], list[list[str | None]]]:
     linhas = ws.iter_rows(values_only=True)
     for linha in linhas:
@@ -92,6 +116,7 @@ def ler_aba(ws, nivel: str) -> tuple[list[str], list[list[str | None]]]:
             vistos[nome] = 1
         nomes.append(nome)
 
+    nomes = preencher_buracos(nomes)
     pos_vl = [i for i, n in enumerate(nomes) if n.startswith("vl_")]
     dados = []
     for linha in linhas:

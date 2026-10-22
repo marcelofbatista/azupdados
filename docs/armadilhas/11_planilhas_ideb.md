@@ -13,6 +13,15 @@ As divulgações do IDEB são planilhas formatadas para leitura humana, não arq
   `VL_INDICADOR_REND_2023`, repetindo o nome da edição anterior. O carregador não descarta nada: a segunda
   ocorrência vira `vl_indicador_rend_2023__2`, e a silver a lê como a edição seguinte (2025). Se a regra
   deixar de valer em algum arquivo, a unicidade da silver quebra e o build para.
+- **Coluna sem nome técnico no meio da série.** No arquivo do Brasil (anos finais), o IDEB observado de
+  2023 vem sem cabeçalho, entre `VL_OBSERVADO_2021` e `VL_OBSERVADO_2025`. O carregador só dá nome a uma
+  coluna assim quando os dois vizinhos confirmam (mesma métrica, anos separados por 4) e registra o caso
+  no log; senão, ela fica como `col_<n>` e fora da silver. Foi o teste de reconciliação com o IDEB oficial
+  que encontrou esse buraco.
+- **Notas de rodapé coladas nos rótulos.** Rede vem como "Total (3)(4)" ou "Pública (4)"; a silver remove
+  os marcadores.
+- **UF com nome abreviado.** "M. G. do Sul", "R. G. do Norte" e "R. G. do Sul" — resolvidas pela seed
+  `ref_territorio_alias`, com a fonte de cada apelido.
 - **`-` como ausente**, em vez de vazio.
 
 Vantagem escondida: as planilhas de 2025 trazem a série inteira desde 2005 (ensino médio desde 2017),

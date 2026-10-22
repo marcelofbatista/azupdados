@@ -15,10 +15,10 @@ TITULO = [["Ministério da Educação"], ["Instituto Nacional de Estudos e Pesqu
 
 
 def metricas(anos, dup_2025=False):
-    cols = []
-    for a in anos:
-        cols += [f"VL_APROVACAO_{a}_SI_4", f"VL_INDICADOR_REND_{a}", f"VL_NOTA_MATEMATICA_{a}",
-                 f"VL_NOTA_PORTUGUES_{a}", f"VL_NOTA_MEDIA_{a}", f"VL_OBSERVADO_{a}"]
+    # como no arquivo real: blocos por métrica, e dentro de cada bloco a série de edições
+    cols = [f"VL_APROVACAO_{a}_SI_4" for a in anos] + [f"VL_INDICADOR_REND_{a}" for a in anos]
+    for m in ("NOTA_MATEMATICA", "NOTA_PORTUGUES", "NOTA_MEDIA", "OBSERVADO"):
+        cols += [f"VL_{m}_{a}" for a in anos]
     if dup_2025:  # defeito real do INEP: a coluna de 2025 sai com o rótulo de 2023
         cols = [c.replace("VL_INDICADOR_REND_2025", "VL_INDICADOR_REND_2023") for c in cols]
     return cols + ["VL_PROJECAO_2021"]
@@ -59,6 +59,8 @@ md = metricas(anos, dup_2025=True)
 zipar("divulgacao_regioes_ufs_ideb_2025", [(f"UF e Regiões ({e})", [None, None] + md,
       [["Centro-Oeste", "Total"] + valores(len(md), 5), ["Distrito Federal", "Pública (4)"] + valores(len(md), 5), ["R. G. do Sul", "Total (3)(4)"] + valores(len(md), 5)])
       for e in ("AI", "AF", "EM")])
-zipar("divulgacao_brasil_ideb_2025", [(f"Brasil ({e})", ["BRASIL", "rede"] + md,
+# defeito real: no arquivo de Brasil, o IDEB observado de 2023 vem sem nome técnico
+mb = [None if c == "VL_OBSERVADO_2023" else c for c in md]
+zipar("divulgacao_brasil_ideb_2025", [(f"Brasil ({e})", ["BRASIL", "rede"] + mb,
       [["Brasil", "Total"] + valores(len(md), 5)]) for e in ("Anos Iniciais", "Anos Finais", "EM")])
 print("fixtures geradas em", AQUI)
