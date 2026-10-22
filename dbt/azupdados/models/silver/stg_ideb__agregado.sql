@@ -8,7 +8,9 @@ with longo as (
     select no_brasil as no_regiao_uf, rede, etapa, coluna, valor
     from ({{ desempilhar_ideb('ideb_brasil_%', ['no_brasil', 'rede']) }}) b
 )
-select trim(no_regiao_uf) as no_territorio, trim(rede) as rede, etapa, coluna,
+select {{ sem_nota_rodape('no_regiao_uf') }} as no_territorio,
+       {{ sem_nota_rodape('rede') }} as rede,   -- "Total (3)(4)" → "Total" (armadilha 11)
+       etapa, coluna,
        {{ interpretar_coluna_ideb() }}
 from longo
 where valor is not null and trim(valor) not in ('-', '')

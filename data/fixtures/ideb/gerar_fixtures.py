@@ -57,7 +57,7 @@ zipar("divulgacao_anos_iniciais_municipios_2025", [("IDEB_AI_MUNICÍPIOS",
        ["DF", 5300108, "Brasília", "Pública"] + valores(len(m), 5)])])
 md = metricas(anos, dup_2025=True)
 zipar("divulgacao_regioes_ufs_ideb_2025", [(f"UF e Regiões ({e})", [None, None] + md,
-      [["Centro-Oeste", "Total"] + valores(len(md), 5), ["Distrito Federal", "Pública"] + valores(len(md), 5)])
+      [["Centro-Oeste", "Total"] + valores(len(md), 5), ["Distrito Federal", "Pública (4)"] + valores(len(md), 5), ["R. G. do Sul", "Total (3)(4)"] + valores(len(md), 5)])
       for e in ("AI", "AF", "EM")])
 zipar("divulgacao_brasil_ideb_2025", [(f"Brasil ({e})", ["BRASIL", "rede"] + md,
       [["Brasil", "Total"] + valores(len(md), 5)]) for e in ("Anos Iniciais", "Anos Finais", "EM")])

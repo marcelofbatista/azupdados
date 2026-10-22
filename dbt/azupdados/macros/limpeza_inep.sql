@@ -34,3 +34,8 @@
 {% macro etapa_ideb_sk(coluna) -%}
     case {{ coluna }} when 'ai' then 2 when 'af' then 3 when 'em' then 4 end
 {%- endmacro %}
+
+{# Remove marcadores de nota de rodapé colados em rótulos do INEP: "Total (3)(4)" → "Total". #}
+{% macro sem_nota_rodape(coluna) -%}
+    trim(regexp_replace({{ coluna }}, '(\s*\(\d+\))+\s*$', ''))
+{%- endmacro %}

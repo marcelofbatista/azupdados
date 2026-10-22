@@ -10,7 +10,10 @@ with base as (
            r.co_regiao as co_regiao_direto, u.co_uf, u.co_regiao as co_regiao_da_uf
     from {{ ref('stg_ideb__agregado') }} s
     left join {{ ref('dim_regiao') }} r on {{ normalizar_nome('r.no_regiao') }} = {{ normalizar_nome('s.no_territorio') }}
-    left join {{ ref('dim_uf') }} u on {{ normalizar_nome('u.no_uf') }} = {{ normalizar_nome('s.no_territorio') }}
+    -- nome por extenso ou abreviado ("R. G. do Sul"): a seed de apelidos resolve as abreviações do INEP
+    left join {{ ref('ref_territorio_alias') }} a on {{ normalizar_nome('a.alias') }} = {{ normalizar_nome('s.no_territorio') }}
+    left join {{ ref('dim_uf') }} u
+      on {{ normalizar_nome('u.no_uf') }} = {{ normalizar_nome('s.no_territorio') }} or u.co_uf = a.co_uf
 )
 select
     {{ dbt_utils.generate_surrogate_key(['no_territorio', 'rede', 'etapa', 'ano_ideb']) }} as fato_ideb_agregado_ano_sk,

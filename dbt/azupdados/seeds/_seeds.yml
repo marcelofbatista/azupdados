@@ -107,3 +107,15 @@ seeds:
         tests: [unique, not_null]
   - name: ref_ideb_oficial
     description: IDEB divulgado pelo INEP, usado como oráculo de reconciliação. Cada linha cita a publicação.
+  - name: ref_territorio_alias
+    description: >
+      Nomes abreviados de UF usados pelo INEP em planilhas, como "R. G. do Sul", e o código IBGE correspondente.
+    columns:
+      - name: alias
+        tests: [unique, not_null]
+      - name: co_uf
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_uf')
+                field: co_uf
