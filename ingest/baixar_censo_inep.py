@@ -48,6 +48,17 @@ def baixar(url: str, arq: Path) -> None:
     print(f"baixado: {arq} ({arq.stat().st_size / 1e6:.0f} MB)")
 
 
+def nome_legivel(info: zipfile.ZipInfo) -> str:
+    """Zips do INEP gravam nomes acentuados em cp850 sem a marca UTF-8; o zipfile os lê como cp437
+    ("educaç╞o"). Reconverte para o nome real ("educação")."""
+    if info.flag_bits & 0x800:
+        return Path(info.filename).name
+    try:
+        return Path(info.filename.encode("cp437").decode("cp850")).name
+    except UnicodeError:
+        return Path(info.filename).name
+
+
 def extrair(zip_path: Path, ano: int) -> None:
     with zipfile.ZipFile(zip_path) as z:
         nomes = [n for n in z.namelist() if not n.endswith("/")]
@@ -56,7 +67,7 @@ def extrair(zip_path: Path, ano: int) -> None:
             sys.exit(f"esperava 1 microdados_ed_basica_{ano}.csv no zip; achei {csv}. Conteúdo: {nomes[:30]}")
         alvos = {csv[0]: DESTINO / Path(csv[0]).name}
         for n in nomes:
-            base = Path(n).name
+            base = nome_legivel(z.getinfo(n))
             if "md5" in base.lower() and str(ano) in base:
                 alvos[n] = DESTINO / "md5" / base
             elif "dicion" in n.lower() and base.lower().endswith((".xlsx", ".xls", ".ods", ".pdf")):
