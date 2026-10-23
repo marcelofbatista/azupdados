@@ -37,6 +37,8 @@ from pathlib import Path
 
 import openpyxl
 
+MIN_ESCOLAS = 1000  # abaixo disso o arquivo real está quebrado; nas fixtures, --min-escolas 1
+
 CHAVES_ESCOLA = {"co_entidade", "pk_cod_entidade", "co_escola", "id_escola", "cod_escola", "cod_entidade"}
 SIGLA_DA_PASTA = {"rendimento": "REND", "tdi": "TDI", "atu": "ATU", "had": "HAD", "afd": "AFD",
                   "ird": "IRD", "ied": "IED", "icg": "ICG", "inse": "INSE"}
@@ -145,7 +147,7 @@ def ler(dados: bytes) -> tuple[list[str], list[str], list[list[str | None]], str
                 dados_linhas.append(valores)
             elif any(valores):
                 recusadas.append(valores)
-        if len(dados_linhas) < 1000:  # algo errado: mostrar o que foi recusado em vez de seguir calado
+        if len(dados_linhas) < MIN_ESCOLAS:  # algo errado: mostrar o que foi recusado em vez de seguir calado
             print(f"      ATENÇÃO: {len(dados_linhas)} linhas aceitas, {len(recusadas)} recusadas. "
                   f"Cabeçalho: {nomes[:12]}  coluna-chave: {nomes[pos_id]} (posição {pos_id + 1})")
             for r in recusadas[:3]:
@@ -265,8 +267,11 @@ def main() -> None:
     p.add_argument("--pasta", type=Path, default=Path("data/landing/indicadores"))
     p.add_argument("--indicadores", default=",".join(SIGLA_DA_PASTA.values()))
     p.add_argument("--anos", help="ex.: 2015-2025 | 2024,2025")
+    p.add_argument("--min-escolas", type=int, default=1000, help="alerta abaixo disso (fixtures: 1)")
     p.add_argument("--so-cabecalhos", action="store_true", help="só imprime os cabeçalhos técnicos (sem banco)")
     args = p.parse_args()
+    global MIN_ESCOLAS
+    MIN_ESCOLAS = args.min_escolas
 
     anos = None
     if args.anos:
@@ -297,7 +302,7 @@ def main() -> None:
             print(f"{sig:4} {ano}  {len(linhas):>7,} escolas × {len(nomes):>3} col  [{md5}]  aba '{aba}'", flush=True)
             if confere is False:
                 divergentes.append(f"{sig} {ano} ({arq.name})")
-            if len(linhas) < 1000:
+            if len(linhas) < MIN_ESCOLAS:
                 poucas.append(f"{sig} {ano}")
             if args.so_cabecalhos:
                 print("      " + " ".join(nomes))
@@ -311,7 +316,7 @@ def main() -> None:
     if sem_cabecalho:
         print(f"\nArquivos PULADOS sem cabeçalho reconhecível: {sem_cabecalho}")
     if poucas:
-        print(f"\nArquivos com menos de 1.000 escolas (NÃO usar até explicar): {poucas}")
+        print(f"\nArquivos com menos de {MIN_ESCOLAS:,} escolas (NÃO usar até explicar): {poucas}")
 
 
 if __name__ == "__main__":

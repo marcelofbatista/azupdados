@@ -1,0 +1,213 @@
+version: 2
+
+models:
+  - name: stg_ind__mapa_colunas
+    description: >
+      De-para de TODAS as colunas dos indicadores INEP por escola: arquivo, posição, nome técnico, rótulo,
+      e o que a silver fez com cada uma. Etapa e medida vêm do rótulo; `etapa_pelo_nome` é o que o nome
+      técnico diria. Onde divergem, o arquivo do INEP tem o nome errado (armadilha 12).
+    columns:
+      - name: medida
+        description: "Coluna de medida da silver (slot). Nula só para colunas de identificação."
+        tests:
+          - not_null:
+              config: {where: "not eh_identificacao"}
+      - name: etapa
+        tests:
+          - not_null:
+              config: {where: "not eh_identificacao"}
+          - relationships:
+              arguments: {to: ref('dim_etapa_indicador'), field: codigo}
+      - name: etapa_pelo_nome
+        description: "Etapa que o nome técnico indicaria. Só para auditoria; nunca usada nos dados."
+
+  - name: stg_ind__rend
+    description: >
+      Taxas de rendimento (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_rend_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: taxa_aprovacao
+        description: "Taxa de aprovação (%) — INEP, rótulo \"Taxa de Aprovação\"."
+      - name: taxa_reprovacao
+        description: "Taxa de reprovação (%)."
+      - name: taxa_abandono
+        description: "Taxa de abandono (%)."
+
+  - name: stg_ind__tdi
+    description: >
+      Taxa de distorção idade-série (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_tdi_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: taxa_distorcao
+        description: "Taxa de distorção idade-série (%): alunos com 2 ou mais anos de atraso escolar."
+
+  - name: stg_ind__atu
+    description: >
+      Média de alunos por turma (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_atu_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: media_alunos_turma
+        description: "Média de alunos por turma."
+
+  - name: stg_ind__had
+    description: >
+      Média de horas-aula diária (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_had_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: media_horas_aula
+        description: "Média de horas-aula diária."
+
+  - name: stg_ind__afd
+    description: >
+      Adequação da formação docente (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_afd_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: pct_grupo_1
+        description: "% de docentes no grupo 1 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+      - name: pct_grupo_2
+        description: "% de docentes no grupo 2 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+      - name: pct_grupo_3
+        description: "% de docentes no grupo 3 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+      - name: pct_grupo_4
+        description: "% de docentes no grupo 4 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+      - name: pct_grupo_5
+        description: "% de docentes no grupo 5 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+
+  - name: stg_ind__ied
+    description: >
+      Esforço docente (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_ied_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: pct_nivel_1
+        description: "% de docentes no nível 1 de esforço docente (nível 6 = maior esforço)."
+      - name: pct_nivel_2
+        description: "% de docentes no nível 2 de esforço docente (nível 6 = maior esforço)."
+      - name: pct_nivel_3
+        description: "% de docentes no nível 3 de esforço docente (nível 6 = maior esforço)."
+      - name: pct_nivel_4
+        description: "% de docentes no nível 4 de esforço docente (nível 6 = maior esforço)."
+      - name: pct_nivel_5
+        description: "% de docentes no nível 5 de esforço docente (nível 6 = maior esforço)."
+      - name: pct_nivel_6
+        description: "% de docentes no nível 6 de esforço docente (nível 6 = maior esforço)."
+
+  - name: stg_ind__ird
+    description: >
+      Regularidade do corpo docente (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_ird_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: ird_media
+        description: "Média do Indicador de Regularidade do Docente (escala do INEP; maior = corpo docente mais estável)."
+
+  - name: stg_ind__icg
+    description: >
+      Complexidade de gestão da escola (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
+      bronze.ind_icg_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
+      nenhuma medida sai.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        description: "Textos que não são ausência ('--') nem número. Devem ser zero."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}
+      - name: icg_nivel
+        description: "Nível de complexidade de gestão da escola (1 a 6)."
+
+  - name: stg_ind__inse
+    description: >
+      INSE por escola × edição do SAEB. Layouts e metodologias diferentes: 2013 (2011–2013) e 2015 em escala
+      e "Grupo 1–6"; 2019+ em escala do SAEB e "Nível I–VIII" (`eh_metodologia_saeb`).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_saeb]}
+    columns:
+      - name: co_entidade
+        tests: [not_null]
+      - name: inse_nivel
+        tests: [not_null]
+      - name: qt_valores_invalidos
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 0}

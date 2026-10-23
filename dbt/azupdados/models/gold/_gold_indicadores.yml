@@ -1,0 +1,330 @@
+version: 2
+
+models:
+  - name: fato_rendimento_escola_ano
+    description: >
+      Taxas de rendimento — indicador oficial do INEP por escola. Grão — escola × ano × etapa/série. Fonte: arquivos
+      "REND_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa_indicador_sk]}
+    columns:
+      - name: fato_rendimento_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: etapa_indicador_sk
+        description: "Etapa ou série (dim_etapa_indicador). Totais e subtotais (`eh_agregado`) não se somam às séries."
+        tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_etapa_indicador'), field: etapa_indicador_sk}
+      - name: taxa_aprovacao
+        description: "Taxa de aprovação (%) — INEP, rótulo \"Taxa de Aprovação\"."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: taxa_reprovacao
+        description: "Taxa de reprovação (%)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: taxa_abandono
+        description: "Taxa de abandono (%)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+  - name: fato_distorcao_idade_serie_escola_ano
+    description: >
+      Taxa de distorção idade-série — indicador oficial do INEP por escola. Grão — escola × ano × etapa/série. Fonte: arquivos
+      "TDI_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa_indicador_sk]}
+    columns:
+      - name: fato_distorcao_idade_serie_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: etapa_indicador_sk
+        description: "Etapa ou série (dim_etapa_indicador). Totais e subtotais (`eh_agregado`) não se somam às séries."
+        tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_etapa_indicador'), field: etapa_indicador_sk}
+      - name: taxa_distorcao
+        description: "Taxa de distorção idade-série (%): alunos com 2 ou mais anos de atraso escolar."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+  - name: fato_alunos_turma_escola_ano
+    description: >
+      Média de alunos por turma — indicador oficial do INEP por escola. Grão — escola × ano × etapa/série. Fonte: arquivos
+      "ATU_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa_indicador_sk]}
+    columns:
+      - name: fato_alunos_turma_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: etapa_indicador_sk
+        description: "Etapa ou série (dim_etapa_indicador). Totais e subtotais (`eh_agregado`) não se somam às séries."
+        tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_etapa_indicador'), field: etapa_indicador_sk}
+      - name: media_alunos_turma
+        description: "Média de alunos por turma."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: warn}
+
+  - name: fato_horas_aula_escola_ano
+    description: >
+      Média de horas-aula diária — indicador oficial do INEP por escola. Grão — escola × ano × etapa/série. Fonte: arquivos
+      "HAD_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa_indicador_sk]}
+    columns:
+      - name: fato_horas_aula_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: etapa_indicador_sk
+        description: "Etapa ou série (dim_etapa_indicador). Totais e subtotais (`eh_agregado`) não se somam às séries."
+        tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_etapa_indicador'), field: etapa_indicador_sk}
+      - name: media_horas_aula
+        description: "Média de horas-aula diária."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 24}
+              config: {severity: error}
+
+  - name: fato_formacao_docente_escola_ano
+    description: >
+      Adequação da formação docente — indicador oficial do INEP por escola. Grão — escola × ano × etapa/série. Fonte: arquivos
+      "AFD_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa_indicador_sk]}
+    columns:
+      - name: fato_formacao_docente_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: etapa_indicador_sk
+        description: "Etapa ou série (dim_etapa_indicador). Totais e subtotais (`eh_agregado`) não se somam às séries."
+        tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_etapa_indicador'), field: etapa_indicador_sk}
+      - name: pct_grupo_1
+        description: "% de docentes no grupo 1 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_grupo_2
+        description: "% de docentes no grupo 2 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_grupo_3
+        description: "% de docentes no grupo 3 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_grupo_4
+        description: "% de docentes no grupo 4 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_grupo_5
+        description: "% de docentes no grupo 5 de adequação da formação (grupo 1 = formação mais adequada à disciplina)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+  - name: fato_esforco_docente_escola_ano
+    description: >
+      Esforço docente — indicador oficial do INEP por escola. Grão — escola × ano × etapa/série. Fonte: arquivos
+      "IED_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa_indicador_sk]}
+    columns:
+      - name: fato_esforco_docente_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: etapa_indicador_sk
+        description: "Etapa ou série (dim_etapa_indicador). Totais e subtotais (`eh_agregado`) não se somam às séries."
+        tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_etapa_indicador'), field: etapa_indicador_sk}
+      - name: pct_nivel_1
+        description: "% de docentes no nível 1 de esforço docente (nível 6 = maior esforço)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_nivel_2
+        description: "% de docentes no nível 2 de esforço docente (nível 6 = maior esforço)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_nivel_3
+        description: "% de docentes no nível 3 de esforço docente (nível 6 = maior esforço)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_nivel_4
+        description: "% de docentes no nível 4 de esforço docente (nível 6 = maior esforço)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_nivel_5
+        description: "% de docentes no nível 5 de esforço docente (nível 6 = maior esforço)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+      - name: pct_nivel_6
+        description: "% de docentes no nível 6 de esforço docente (nível 6 = maior esforço)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 100}
+              config: {severity: error}
+
+  - name: fato_regularidade_docente_escola_ano
+    description: >
+      Regularidade do corpo docente — indicador oficial do INEP por escola. Grão — escola × ano. Fonte: arquivos
+      "IRD_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo]}
+    columns:
+      - name: fato_regularidade_docente_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: ird_media
+        description: "Média do Indicador de Regularidade do Docente (escala do INEP; maior = corpo docente mais estável)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 0, max_value: 5}
+              config: {severity: error}
+
+  - name: fato_complexidade_gestao_escola_ano
+    description: >
+      Complexidade de gestão da escola — indicador oficial do INEP por escola. Grão — escola × ano. Fonte: arquivos
+      "ICG_<ano>_ESCOLAS" de gov.br/inep (indicadores educacionais), 2015–2025.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_censo]}
+    columns:
+      - name: fato_complexidade_gestao_escola_ano_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        description: "Nulo quando a escola não está no Censo carregado (o código INEP fica em co_entidade)."
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: co_entidade
+        tests: [not_null]
+      - name: icg_nivel
+        description: "Nível de complexidade de gestão da escola (1 a 6)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 1, max_value: 6}
+              config: {severity: error}
+
+  - name: fato_inse_escola_edicao
+    description: >
+      Indicador de Nível Socioeconômico (INSE) por escola, calculado pelo INEP com o questionário do SAEB.
+      Grão — escola × edição. Edições 2013 (2011–2013) e 2015 têm outra metodologia
+      (`eh_metodologia_saeb` = false) e não se comparam com 2019, 2021 e 2023.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments: {combination_of_columns: [co_entidade, ano_saeb]}
+    columns:
+      - name: fato_inse_escola_edicao_sk
+        tests: [unique, not_null]
+      - name: escola_sk
+        tests:
+          - relationships:
+              arguments: {to: ref('dim_escola'), field: escola_sk}
+      - name: inse_nivel
+        description: "Nível (2019+, I–VIII → 1–8) ou grupo (2013/2015, 1–6)."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments: {min_value: 1, max_value: 8}
+      - name: inse_valor
+        description: "Média do INSE na escola (escala muda com a metodologia)."

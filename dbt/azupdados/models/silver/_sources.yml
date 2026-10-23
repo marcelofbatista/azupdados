@@ -10,3 +10,9 @@ sources:
           especial por tipo, UF e dependência, com privacidade diferencial. Formato longo.
       - name: sedap_ee_tipo_estatisticas
         description: Estatísticas de privacidade diferencial (ruído, IC 95%) por métrica e ano.
+      - name: ind_colunas
+        description: >
+          Dicionário das colunas dos indicadores INEP por escola, gravado por `ingest/bronze_indicadores.py`:
+          sigla, ano, posição, nome técnico e rótulo legível (linhas de título acima do cabeçalho técnico).
+          As tabelas de dados são `bronze.ind_<sigla>_<ano>`, uma por arquivo, lidas pela macro
+          `ind_por_escola` a partir deste dicionário.

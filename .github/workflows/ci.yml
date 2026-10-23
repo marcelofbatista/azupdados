@@ -45,6 +45,7 @@ jobs:
           done
           python ingest/bronze_sedap.py --pasta data/fixtures/sedap
           python ingest/bronze_ideb.py --pasta data/fixtures/ideb
+          python ingest/bronze_indicadores.py --pasta data/fixtures/indicadores --min-escolas 1
       - name: dbt build (silver + gold + testes)
         working-directory: dbt/azupdados
         run: |

@@ -67,6 +67,23 @@ seeds:
     columns:
       - name: etapa_sk
         tests: [unique, not_null]
+  - name: dim_etapa_indicador
+    description: >
+      Etapas e séries em que o INEP divulga os indicadores educacionais por escola (rendimento, distorção
+      idade-série, alunos por turma, horas-aula, formação e esforço docente). `codigo` é o que a silver
+      deduz do RÓTULO da planilha (armadilha 12). `etapa_sk` liga ao grão mais largo de `dim_etapa`;
+      `eh_agregado` marca totais e subtotais (não somar com as séries).
+    columns:
+      - name: etapa_indicador_sk
+        tests: [unique, not_null]
+      - name: codigo
+        tests: [unique, not_null]
+      - name: etapa_sk
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_etapa')
+                field: etapa_sk
   - name: dim_situacao
     description: Situação do aluno ao fim do ano letivo (rendimento), com o código do INEP.
     columns:

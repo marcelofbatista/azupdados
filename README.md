@@ -20,6 +20,8 @@ O `azupdados` resolve isso uma vez, de forma auditável: preserva os arquivos of
 |---|---|---|---|
 | Censo Escolar (INEP) — `microdados_ed_basica` | escola × ano | Brasil, 2014–2025 | 🚧 em andamento |
 | IDEB (INEP) | escola, município, UF × edição | 2005–2025 | ✅ |
+| Indicadores educacionais (INEP) — rendimento, distorção idade-série, alunos por turma, horas-aula, formação, esforço e regularidade docente, complexidade de gestão | escola × ano × etapa/série | Brasil, 2015–2025 | ✅ carregado; silver e gold prontos, validação na base real em andamento |
+| INSE — nível socioeconômico (INEP) | escola × edição do SAEB | 2011–2013, 2015, 2019, 2021, 2023 | ✅ (metodologias anteriores a 2019 marcadas como não comparáveis) |
 | SAEB (INEP) — microdados | aluno × edição | 2011–2023 | ⏳ |
 | Censos Demográficos 2010 e 2022 (IBGE) | município × idade × sexo | Brasil | ⏳ |
 | Projeções de população (IBGE, revisão 2024) | UF × idade × sexo × ano | 2000–2070 | ⏳ |
@@ -79,7 +81,7 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 09 | Números do SEDAP+ têm ruído de privacidade diferencial (inclusive valores negativos em célula pequena) e, sem filtro, contam o aluno do AEE duas vezes (+30% a +53%) | `assert_sedap_total_proximo_do_censo_aberto` | 🚧 |
 | 10 | IBGE e INEP trocam os códigos de parda e amarela (4/3 × 3/4): juntar pelo número inverte os grupos | `unique` nos dois códigos de `dim_cor_raca` | ✅ |
 | 11 | Planilhas do IDEB: cabeçalho técnico depois de linhas de título, colunas de identificação sem nome e nome de coluna repetido (o indicador de rendimento de 2025 sai rotulado como 2023) | `unicidade_com_nulos` na silver | ✅ |
-| 12 | Indicadores do INEP por escola: o cabeçalho técnico às vezes mente — código e nome da escola trocados (ATU 2016–2018) e nomes de coluna deslocados em relação aos dados (rendimento 2018–2020). A bronze corrige pela forma do conteúdo; a silver mapeia pelo rótulo, não pelo nome | log `CORREÇÃO:` na bronze; de-para por rótulo na silver | 🚧 |
+| 12 | Indicadores do INEP por escola: o cabeçalho técnico às vezes mente — código e nome da escola trocados (ATU 2016–2018) e nomes de coluna deslocados em relação aos dados (rendimento 2018–2020). A bronze corrige pela forma do conteúdo; a silver mapeia pelo rótulo, não pelo nome | `assert_rendimento_soma_100`, `assert_ind_nome_diverge_do_rotulo` (auditoria) | ✅ |
 
 ## Reconciliação com números oficiais
 
@@ -139,8 +141,10 @@ ganha aqui uma versão nacional; as que dependem de sistemas internos de uma red
 | Infraestrutura da escola | `fato_infraestrutura_escola_ano` | Censo Escolar | ✅ |
 | Docentes e turmas por escola | `fato_docentes_turmas_escola_ano` | Censo Escolar | ✅ |
 | Profissionais não docentes (psicólogo, intérprete de Libras...) | `fato_profissionais_escola_ano` | Censo Escolar | ✅ |
-| Rendimento (aprovação, reprovação, abandono) | `fato_rendimento_escola_ano` | Taxas de Rendimento (INEP) | ⏳ |
-| Indicadores educacionais (distorção idade-série, alunos por turma, formação docente, INSE) | `fato_indicadores_inep_escola_ano` | Indicadores Educacionais (INEP) | ⏳ |
+| Rendimento (aprovação, reprovação, abandono) por etapa e série | `fato_rendimento_escola_ano` | Taxas de Rendimento (INEP), 2015–2025 | ✅ |
+| Distorção idade-série, alunos por turma, horas-aula | `fato_{distorcao_idade_serie,alunos_turma,horas_aula}_escola_ano` | Indicadores Educacionais (INEP), 2015–2025 | ✅ |
+| Formação, esforço e regularidade docente; complexidade de gestão | `fato_{formacao_docente,esforco_docente,regularidade_docente,complexidade_gestao}_escola_ano` | Indicadores Educacionais (INEP), 2015–2025 | ✅ |
+| Nível socioeconômico da escola | `fato_inse_escola_edicao` | INSE (INEP) | ✅ |
 | IDEB | `fato_ideb_{escola,municipio,agregado}_ano` | IDEB (INEP), série 2005–2025 | ✅ |
 | Proficiência | `fato_saeb_*` | SAEB, com PySpark | ⏳ |
 | População (denominador) | `fato_populacao_*` | IBGE | ⏳ |

@@ -1,0 +1,26 @@
+etapa_indicador_sk,codigo,nome,nivel,eh_agregado,ano_serie,etapa_sk,ordem
+1,basica,Escola (educação básica),Educação Básica,true,,9,1
+10,inf,Educação Infantil - Total,Educação Infantil,true,,1,10
+11,inf_creche,Creche,Educação Infantil,false,,1,11
+12,inf_pre,Pré-Escola,Educação Infantil,false,,1,12
+20,fun,Ensino Fundamental - Total,Ensino Fundamental,true,,,20
+21,fun_ai,Ensino Fundamental - Anos Iniciais,Ensino Fundamental,true,,2,21
+22,fun_af,Ensino Fundamental - Anos Finais,Ensino Fundamental,true,,3,22
+201,fun_01,Ensino Fundamental - 1º ano,Ensino Fundamental,false,1,2,201
+202,fun_02,Ensino Fundamental - 2º ano,Ensino Fundamental,false,2,2,202
+203,fun_03,Ensino Fundamental - 3º ano,Ensino Fundamental,false,3,2,203
+204,fun_04,Ensino Fundamental - 4º ano,Ensino Fundamental,false,4,2,204
+205,fun_05,Ensino Fundamental - 5º ano,Ensino Fundamental,false,5,2,205
+206,fun_06,Ensino Fundamental - 6º ano,Ensino Fundamental,false,6,3,206
+207,fun_07,Ensino Fundamental - 7º ano,Ensino Fundamental,false,7,3,207
+208,fun_08,Ensino Fundamental - 8º ano,Ensino Fundamental,false,8,3,208
+209,fun_09,Ensino Fundamental - 9º ano,Ensino Fundamental,false,9,3,209
+23,fun_multietapa,"Ensino Fundamental - turmas multietapa, multi ou de correção de fluxo",Ensino Fundamental,false,,,230
+30,med,Ensino Médio - Total,Ensino Médio,true,,4,300
+301,med_01,Ensino Médio - 1ª série,Ensino Médio,false,1,4,301
+302,med_02,Ensino Médio - 2ª série,Ensino Médio,false,2,4,302
+303,med_03,Ensino Médio - 3ª série,Ensino Médio,false,3,4,303
+304,med_04,Ensino Médio - 4ª série,Ensino Médio,false,4,4,304
+305,med_ns,Ensino Médio - não seriado,Ensino Médio,false,,4,305
+40,eja_fun,EJA - Ensino Fundamental,EJA,true,,6,400
+41,eja_med,EJA - Ensino Médio,EJA,true,,7,410
