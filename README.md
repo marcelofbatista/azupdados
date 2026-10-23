@@ -1,6 +1,6 @@
 # azupdados
 
-🇬🇧 **English** · 🇧🇷 [Português](README.pt-BR.md)
+🇬🇧 **English** · 🇧🇷 [Português](README.pt-BR.md) · [![CI](https://github.com/marcelofbatista/azupdados/actions/workflows/ci.yml/badge.svg)](https://github.com/marcelofbatista/azupdados/actions/workflows/ci.yml)
 
 **An open data warehouse of Brazilian basic education — School Census, SAEB, IDEB and IBGE as historical series, built with a medallion architecture, Kimball modelling and dbt.**
 
@@ -181,7 +181,7 @@ censuses, internal forms and local household surveys.
 
 ## About the author
 
-**Marcelo Batista** — data scientist and engineer in the public sector, where he leads the build of an education observatory (PostgreSQL, dimensional modelling, BI). `azupdados` is a personal project, built exclusively on open data and independent of any institution.
+**Marcelo F Batista** — data scientist and engineer in the public sector, where he leads the build of an education observatory (PostgreSQL, dimensional modelling, BI). `azupdados` is a personal project, built exclusively on open data and independent of any institution.
 
 ## Licence
 

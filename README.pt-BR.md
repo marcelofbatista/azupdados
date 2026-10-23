@@ -1,6 +1,6 @@
 # azupdados
 
-🇬🇧 [English](README.md) · 🇧🇷 **Português**
+🇬🇧 [English](README.md) · 🇧🇷 **Português** · [![CI](https://github.com/marcelofbatista/azupdados/actions/workflows/ci.yml/badge.svg)](https://github.com/marcelofbatista/azupdados/actions/workflows/ci.yml)
 
 **Data warehouse aberto da educação básica brasileira — Censo Escolar, SAEB, IDEB e IBGE em série histórica, com arquitetura medalhão, modelagem Kimball e transformações em dbt.**
 
@@ -165,7 +165,7 @@ estaduais próprios, formulários internos e pesquisas domiciliares locais.
 
 ## Sobre o autor
 
-**Marcelo Batista** — cientista e engenheiro de dados no setor público, onde lidera a construção de um observatório educacional (PostgreSQL, modelagem dimensional, BI). O `azupdados` é um projeto pessoal, construído exclusivamente com dados abertos e independente de qualquer instituição.
+**Marcelo F Batista** — cientista e engenheiro de dados no setor público, onde lidera a construção de um observatório educacional (PostgreSQL, modelagem dimensional, BI). O `azupdados` é um projeto pessoal, construído exclusivamente com dados abertos e independente de qualquer instituição.
 
 ## Licença
 
