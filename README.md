@@ -18,7 +18,7 @@ O `azupdados` resolve isso uma vez, de forma auditável: preserva os arquivos of
 
 | Fonte | Grão | Cobertura | Status |
 |---|---|---|---|
-| Censo Escolar (INEP) — `microdados_ed_basica` | escola × ano | Brasil, 2014–2025 | 🚧 em andamento |
+| Censo Escolar (INEP) — `microdados_ed_basica` | escola × ano | Brasil, 2014–2024 (2025 entra quando o INEP publicar os microdados; em out/2026 a página vai até 2024) | ✅ carregado; reconciliação de 2014–2017 pendente |
 | IDEB (INEP) | escola, município, UF × edição | 2005–2025 | ✅ |
 | Indicadores educacionais (INEP) — rendimento, distorção idade-série, alunos por turma, horas-aula, formação, esforço e regularidade docente, complexidade de gestão | escola × ano × etapa/série | Brasil, 2015–2025 | ✅ carregado; silver e gold prontos, validação na base real em andamento |
 | INSE — nível socioeconômico (INEP) | escola × edição do SAEB | 2011–2013, 2015, 2019, 2021, 2023 | ✅ (metodologias anteriores a 2019 marcadas como não comparáveis) |
