@@ -24,7 +24,7 @@ INEP's education microdata are public, but using them well is hard. Layouts chan
 |---|---|---|---|
 | School Census (INEP) — `microdados_ed_basica` | school × year | Brazil, 2014–2024 (2025 will be added when INEP publishes the microdata; as of Oct 2026 the page stops at 2024) | ✅ 2014–2024 reconciled with INEP (zero difference in every year) |
 | IDEB — basic education development index (INEP) | school, municipality, state × edition | 2005–2025 | ✅ |
-| Education indicators (INEP) — pass/fail/dropout rates, age-grade distortion, students per class, daily class hours, teacher qualification, workload and stability, school management complexity | school × year × grade level | Brazil, 2015–2025 | ✅ 2015–2025 on real data; pass + fail + dropout add up to 100% in all 12.3M rows |
+| Education indicators (INEP) — pass/fail/dropout rates, age-grade distortion, students per class, daily class hours, teacher qualification, workload and stability, school management complexity | school × year × grade level | Brazil, 2015–2025 | ✅ 2015–2025 on real data; pass + fail + dropout add up to 100% (±0.5 pp) in all 12.3M rows |
 | INSE — school socioeconomic level (INEP) | school × SAEB edition | 2011–2013, 2015, 2019, 2021, 2023 | ✅ (pre-2019 methodologies flagged as not comparable) |
 | SAEB (INEP) — national assessment microdata | student × edition | 2011–2023 | ⏳ |
 | Population Censuses 2010 and 2022 (IBGE) | municipality × age × sex | Brazil | ⏳ |
