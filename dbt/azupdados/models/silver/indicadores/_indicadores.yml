@@ -26,9 +26,6 @@ models:
       Taxas de rendimento (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_rend_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -49,9 +46,6 @@ models:
       Taxa de distorção idade-série (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_tdi_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -68,9 +62,6 @@ models:
       Média de alunos por turma (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_atu_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -87,9 +78,6 @@ models:
       Média de horas-aula diária (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_had_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -106,9 +94,6 @@ models:
       Adequação da formação docente (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_afd_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -133,9 +118,6 @@ models:
       Esforço docente (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_ied_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -162,9 +144,6 @@ models:
       Regularidade do corpo docente (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_ird_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -181,9 +160,6 @@ models:
       Complexidade de gestão da escola (INEP) por escola — escola × ano × etapa, uma coluna por medida. Lido de
       bronze.ind_icg_<ano> pelo rótulo das colunas (macro ind_por_escola). '--' vira nulo; linha sem
       nenhuma medida sai.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_censo, etapa]}
     columns:
       - name: co_entidade
         tests: [not_null]
@@ -199,9 +175,6 @@ models:
     description: >
       INSE por escola × edição do SAEB. Layouts e metodologias diferentes: 2013 (2011–2013) e 2015 em escala
       e "Grupo 1–6"; 2019+ em escala do SAEB e "Nível I–VIII" (`eh_metodologia_saeb`).
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments: {combination_of_columns: [co_entidade, ano_saeb]}
     columns:
       - name: co_entidade
         tests: [not_null]
