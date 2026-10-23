@@ -18,7 +18,7 @@ O `azupdados` resolve isso uma vez, de forma auditável: preserva os arquivos of
 
 | Fonte | Grão | Cobertura | Status |
 |---|---|---|---|
-| Censo Escolar (INEP) — `microdados_ed_basica` | escola × ano | Brasil, 2014–2024 (2025 entra quando o INEP publicar os microdados; em out/2026 a página vai até 2024) | ✅ carregado; 2015–2024 reconciliado com o INEP (diferença zero), 2014 a conferir |
+| Censo Escolar (INEP) — `microdados_ed_basica` | escola × ano | Brasil, 2014–2024 (2025 entra quando o INEP publicar os microdados; em out/2026 a página vai até 2024) | ✅ 2014–2024 reconciliado com o INEP (diferença zero em todos os anos) |
 | IDEB (INEP) | escola, município, UF × edição | 2005–2025 | ✅ |
 | Indicadores educacionais (INEP) — rendimento, distorção idade-série, alunos por turma, horas-aula, formação, esforço e regularidade docente, complexidade de gestão | escola × ano × etapa/série | Brasil, 2015–2025 | ✅ carregado; silver e gold prontos, validação na base real em andamento |
 | INSE — nível socioeconômico (INEP) | escola × edição do SAEB | 2011–2013, 2015, 2019, 2021, 2023 | ✅ (metodologias anteriores a 2019 marcadas como não comparáveis) |
@@ -91,7 +91,7 @@ Todo total calculado é conferido contra o número publicado pelo INEP, registra
 
 | Ano | Matrículas na educação básica (INEP) | Calculado no `azupdados` | Diferença |
 |---|---|---|---|
-| 2014 | a conferir | (rodar após carga) | — |
+| 2014 | 49.771.371 | 49.771.371 | 0 |
 | 2015 | 48.796.512 | 48.796.512 | 0 |
 | 2016 | 48.817.479 | 48.817.479 | 0 |
 | 2017 | 48.608.093 | 48.608.093 | 0 |
