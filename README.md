@@ -79,6 +79,7 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 09 | Números do SEDAP+ têm ruído de privacidade diferencial (inclusive valores negativos em célula pequena) e, sem filtro, contam o aluno do AEE duas vezes (+30% a +53%) | `assert_sedap_total_proximo_do_censo_aberto` | 🚧 |
 | 10 | IBGE e INEP trocam os códigos de parda e amarela (4/3 × 3/4): juntar pelo número inverte os grupos | `unique` nos dois códigos de `dim_cor_raca` | ✅ |
 | 11 | Planilhas do IDEB: cabeçalho técnico depois de linhas de título, colunas de identificação sem nome e nome de coluna repetido (o indicador de rendimento de 2025 sai rotulado como 2023) | `unicidade_com_nulos` na silver | ✅ |
+| 12 | Indicadores do INEP por escola: o cabeçalho técnico às vezes mente — código e nome da escola trocados (ATU 2016–2018) e nomes de coluna deslocados em relação aos dados (rendimento 2018–2020). A bronze corrige pela forma do conteúdo; a silver mapeia pelo rótulo, não pelo nome | log `CORREÇÃO:` na bronze; de-para por rótulo na silver | 🚧 |
 
 ## Reconciliação com números oficiais
 
