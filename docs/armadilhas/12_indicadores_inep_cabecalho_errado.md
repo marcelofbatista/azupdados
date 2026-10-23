@@ -17,7 +17,7 @@ código e nome trocados — e o join com o Censo falha em silêncio.
 coluna "código" não tem cara de código (8 dígitos para escola, 7 para município) e a coluna "nome" tem
 (menos de 50% contra mais de 90%), troca os rótulos e registra `CORREÇÃO:` no log.
 
-## 2. Nomes técnicos deslocados em relação aos dados (Rendimento 2018–2020)
+## 2. Nomes técnicos deslocados em relação aos dados (Rendimento 2018–2020 e ATU 2018)
 
 Em 2018, `TAP_F04` (5º ano) aparece logo depois de `TAP_F14` (anos iniciais), e todos os nomes seguintes
 ficam uma posição à frente. Os **rótulos** (texto acima) continuam na ordem certa. Qual dos dois descreve
@@ -35,7 +35,13 @@ rótulo; o nome técnico está errado.** Usar o nome faria a "aprovação nos an
 na verdade, a de outra série — um degrau falso no meio da série histórica.
 
 **Correção (silver):** o de-para das colunas é feito pelo **rótulo e pela posição**, guardados pela bronze
-em `bronze.ind_colunas`, não pelo nome técnico.
+em `bronze.ind_colunas`, não pelo nome técnico. O modelo `stg_ind__mapa_colunas` registra, para cada coluna de
+cada arquivo, a etapa que o rótulo indica e a que o nome indicaria. Na base real, eles divergem em quatro
+arquivos — rendimento 2018, 2019 e 2020 (18 colunas cada) e ATU 2018 (6 colunas) — e só neles.
+
+**Prova na base real:** o teste `assert_rendimento_soma_100` exige aprovação + reprovação + abandono = 100 em
+cada escola, etapa e ano. Ele passa em todos os 12,3 milhões de linhas de 2015–2025, inclusive 2018–2020; se
+alguma coluna tivesse sido lida na etapa errada, a soma quebraria em milhares de escolas.
 
 ## Outras características (não são erro, mas exigem cuidado)
 
@@ -49,5 +55,8 @@ em `bronze.ind_colunas`, não pelo nome técnico.
 - `--` é ausência de dado (etapa não oferecida ou sigilo), não zero.
 - A cobertura muda: o HAD tem ~152 mil escolas em 2016–2021 e ~173 mil a partir de 2022; o TDI de 2015 tem
   179 mil escolas e o de 2016, 140 mil. Contar escolas entre anos sem olhar isso cria tendência falsa.
-- O INSE 2013 e 2015 usa metodologia anterior, com escala e classificação ("Grupo 1–6") diferentes das
-  edições de 2019 em diante ("Nível I–VIII"). O INEP avisa que não são comparáveis.
+- O INSE 2013 (edição 2011–2013) e o de 2015 usam metodologia anterior, com escala ~0–100 e classificação
+  própria — sete níveis nominais em 2013 ("Muito Baixo" a "Muito Alto"), "Grupo 1–6" em 2015 — diferentes das
+  edições de 2019 em diante ("Nível I–VIII", escala do SAEB). O INEP avisa que não são comparáveis.
+- A média de alunos por turma passa de 100 em cerca de 60 escolas por ano (máximo de 1.270 em 2025). São os
+  valores publicados; a gold os mantém e o teste de faixa só avisa.
