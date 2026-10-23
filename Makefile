@@ -4,7 +4,7 @@ PY    := $(VENV)/bin/python
 DBT_THREADS ?= 2
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
-.PHONY: setup up down psql bronze-censo sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores dbt-deps dbt-build dbt-build-full dbt-docs lint
+.PHONY: setup up down psql sql bronze-censo sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores dbt-deps dbt-build dbt-build-full dbt-docs lint
 
 setup:            ## cria o venv e instala dependências
 	python3 -m venv $(VENV)
@@ -21,6 +21,9 @@ down:
 
 psql:             ## abre o psql dentro do container
 	set -a; source .env; set +a; docker exec -it azupdados-postgres psql -U $$POSTGRES_USER -d $$POSTGRES_DB
+
+sql:              ## roda SQL vindo da entrada padrão (sem terminal):  make sql <<'SQL' ... SQL
+	set -a; source .env; set +a; docker exec -i azupdados-postgres psql -U $$POSTGRES_USER -d $$POSTGRES_DB -P pager=off
 
 bronze-censo:     ## make bronze-censo ARQ=<csv> ANO=<ano> [MD5=<arquivo md5 oficial>]
 	set -a; source .env; set +a; $(PY) ingest/bronze_censo_escolar.py --arquivo $(ARQ) --ano $(ANO) $(if $(MD5),--md5-oficial $(MD5),)
