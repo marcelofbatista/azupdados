@@ -2,10 +2,20 @@ version: 2
 
 models:
   - name: dim_tempo
-    description: Dimensão de tempo no grão ano.
+    description: >
+      Dimensão de tempo no grão ano, com recortes de leitura: fase da pandemia (2020–2021 com escolas
+      fechadas ou remotas), ciclo dos mandatos federal/estadual e municipal (só o período) e anos de SAEB.
     columns:
       - name: ano_censo
         tests: [unique, not_null]
+      - name: fase_pandemia
+        tests:
+          - accepted_values:
+              arguments: {values: ['pré-pandemia', 'pandemia', 'pós-pandemia']}
+      - name: mandato_federal_estadual
+        description: "Ciclo de governo federal e estadual que contém o ano (ex.: 2019–2022)."
+      - name: mandato_municipal
+        description: "Ciclo de governo municipal que contém o ano (ex.: 2021–2024)."
 
   - name: dim_escola
     description: >
