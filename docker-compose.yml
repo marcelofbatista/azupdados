@@ -14,20 +14,27 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./sql/init:/docker-entrypoint-initdb.d:ro
-    # Teto de memória: o azupdados divide o servidor com serviços de produção e nunca pode
-    # disputar RAM com eles. Parâmetros do Postgres dimensionados para caber nesse limite.
-    mem_limit: 1536m
-    shm_size: 256m
+    # Teto de memória: o servidor é compartilhado, então o Postgres tem limite próprio (PG_MEM_LIMIT no
+    # .env, padrão 4g). Com 1,5 GB, a gold dos indicadores INEP derrubava o banco (OOM): consultas com
+    # centenas de CASE/regex por arquivo e JIT ligado. Parâmetros abaixo cabem nesse teto.
+    mem_limit: ${PG_MEM_LIMIT:-4g}
+    shm_size: 512m
     command:
       - postgres
       - -c
-      - shared_buffers=384MB
+      - shared_buffers=768MB
       - -c
       - work_mem=32MB
       - -c
       - maintenance_work_mem=256MB
       - -c
-      - effective_cache_size=1GB
+      - effective_cache_size=2GB
+      # JIT compila consultas grandes com LLVM e consome muita memória justamente nas consultas largas
+      # dos indicadores; para cargas analíticas em lote o ganho não compensa.
+      - -c
+      - jit=off
+      - -c
+      - max_parallel_workers_per_gather=1
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
