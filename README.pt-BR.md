@@ -167,6 +167,8 @@ estaduais próprios, formulários internos e pesquisas domiciliares locais.
 
 **Marcelo F Batista** — cientista e engenheiro de dados no setor público, onde lidera a construção de um observatório educacional (PostgreSQL, modelagem dimensional, BI). O `azupdados` é um projeto pessoal, construído exclusivamente com dados abertos e independente de qualquer instituição.
 
+Desenvolvido em programação em par com IA (Claude). As decisões de modelagem, a validação e cada reconciliação são revisadas e executadas pelo autor.
+
 ## Licença
 
 Código: MIT. Os dados pertencem às fontes originais (INEP, IBGE) e seguem os termos de uso de cada uma.

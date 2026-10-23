@@ -183,6 +183,8 @@ censuses, internal forms and local household surveys.
 
 **Marcelo F Batista** — data scientist and engineer in the public sector, where he leads the build of an education observatory (PostgreSQL, dimensional modelling, BI). `azupdados` is a personal project, built exclusively on open data and independent of any institution.
 
+Built with AI pair programming (Claude). Data modelling decisions, validation and every reconciliation are reviewed and run by the author.
+
 ## Licence
 
 Code: MIT. The data belong to the original sources (INEP, IBGE) and follow each one's terms of use.
