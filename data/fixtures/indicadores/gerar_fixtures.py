@@ -239,6 +239,20 @@ def main():
     (AQUI / "inse").mkdir(exist_ok=True)
     for ano in (2019, 2023):
         (AQUI / "inse" / (f"INSE_{ano}_ESCOLAS.xlsx" if ano == 2019 else f"INSE_{ano}_escolas.xlsx")).write_bytes(inse(ano))
+    # edição 2011–2013: cabeçalho com espaço e acento ("INSE - CLASSIFICAÇÃO") e sete níveis nominais
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Banco"
+    ws.append(["COD_ESCOLA", "NOME_ESCOLA", "COD_ESTADO", "NOME_ESTADO", "COD_MUNICIPIO", "NOME_MUNICIPIO",
+               "ID_AREA", "AREA", "ID_REDE", "REDE", "ID_LOCALIZACAO", "LOCALIZACAO", "QTD_ALUNOS_INSE",
+               "INSE - VALOR ABSOLUTO", "INSE - CLASSIFICAÇÃO"])
+    for i, cod in enumerate(ESCOLAS):
+        ws.append([int(cod), f"ESCOLA {cod}", 53, "DF", 5300108, "Brasília", 1, "Capital", 2, "Estadual", 1,
+                   "Urbana", 25 + i, 45.5 + 5 * i, ["Médio", "Médio Alto", "Alto", "Muito Baixo"][i]])
+    b = io.BytesIO()
+    wb.save(b)
+    with zipfile.ZipFile(AQUI / "inse" / "Indicador_INSE_por_Escola.zip", "w") as z:
+        z.writestr("Indicador_INSE_por_Escola.xlsx", b.getvalue())
     with zipfile.ZipFile(AQUI / "inse" / "Indicador_Inse_2015.zip", "w") as z:
         z.writestr("INSE_2015.xlsx", inse(2015))
         z.writestr("nota_tecnica_indicador_escola_nivel_socioeconomico_2015.pdf", b"%PDF-1.4 sintetico")

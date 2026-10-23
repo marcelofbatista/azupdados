@@ -99,7 +99,7 @@ models:
           - relationships:
               arguments: {to: ref('dim_etapa_indicador'), field: etapa_indicador_sk}
       - name: media_alunos_turma
-        description: "Média de alunos por turma."
+        description: "Média de alunos por turma, como publicada pelo INEP. Cerca de 60 escolas por ano passam de 100 (máximo de 1.270 em 2025): valores oficiais, mantidos; o teste de faixa só avisa."
         tests:
           - dbt_utils.accepted_range:
               arguments: {min_value: 0, max_value: 100}
@@ -322,7 +322,7 @@ models:
           - relationships:
               arguments: {to: ref('dim_escola'), field: escola_sk}
       - name: inse_nivel
-        description: "Nível (2019+, I–VIII → 1–8) ou grupo (2013/2015, 1–6)."
+        description: "Nível: 2019+ I–VIII → 1–8; 2015 Grupo 1–6; 2013 Muito Baixo…Muito Alto → 1–7. Não comparar entre metodologias."
         tests:
           - dbt_utils.accepted_range:
               arguments: {min_value: 1, max_value: 8}

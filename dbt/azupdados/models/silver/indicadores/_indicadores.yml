@@ -173,8 +173,9 @@ models:
 
   - name: stg_ind__inse
     description: >
-      INSE por escola × edição do SAEB. Layouts e metodologias diferentes: 2013 (2011–2013) e 2015 em escala
-      e "Grupo 1–6"; 2019+ em escala do SAEB e "Nível I–VIII" (`eh_metodologia_saeb`).
+      INSE por escola × edição do SAEB. Layouts e metodologias diferentes: 2013 (2011–2013) em sete níveis
+      nominais ("Muito Baixo" a "Muito Alto" → 1–7) e 2015 em "Grupo 1–6", ambos em escala ~0–100; 2019+ em
+      escala do SAEB e "Nível I–VIII" (`eh_metodologia_saeb`).
     columns:
       - name: co_entidade
         tests: [not_null]
