@@ -4,7 +4,7 @@ O servidor de staging tem 2 núcleos e ~11 GB de RAM. O Spark roda em modo local
 o ganho aqui não é distribuir entre máquinas, e sim ler CSVs de 1 GB sem estourar a memória, com leitura
 colunar em Parquet e agregações que não cabem num pandas.
 
-Ajustes por variável de ambiente: SPARK_DRIVER_MEMORY (padrão 6g), SPARK_LOCAL_DIRS (padrão data/spark_tmp).
+Ajustes por variável de ambiente: SPARK_DRIVER_MEMORY (padrão 5g: deixa espaço para o Postgres, limitado a 4g), SPARK_LOCAL_DIRS (padrão data/spark_tmp).
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ def criar_sessao(nome: str) -> SparkSession:
     spark = (
         SparkSession.builder.appName(f"azupdados-{nome}")
         .master(os.environ.get("SPARK_MASTER", "local[*]"))
-        .config("spark.driver.memory", os.environ.get("SPARK_DRIVER_MEMORY", "6g"))
+        .config("spark.driver.memory", os.environ.get("SPARK_DRIVER_MEMORY", "5g"))
         .config("spark.local.dir", str(tmp))
         .config("spark.sql.shuffle.partitions", "8")
         .config("spark.sql.session.timeZone", "UTC")
