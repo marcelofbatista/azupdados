@@ -26,7 +26,7 @@ INEP's education microdata are public, but using them well is hard. Layouts chan
 | IDEB — basic education development index (INEP) | school, municipality, state × edition | 2005–2025 | ✅ |
 | Education indicators (INEP) — pass/fail/dropout rates, age-grade distortion, students per class, daily class hours, teacher qualification, workload and stability, school management complexity | school × year × grade level | Brazil, 2015–2025 | ✅ 2015–2025 on real data; pass + fail + dropout add up to 100% (±0.5 pp) in all 12.3M rows |
 | INSE — school socioeconomic level (INEP) | school × SAEB edition | 2011–2013, 2015, 2019, 2021, 2023 | ✅ (pre-2019 methodologies flagged as not comparable) |
-| SAEB (INEP) — national assessment microdata | student × edition | 2011–2023 | ⏳ |
+| SAEB (INEP) — national assessment microdata, with PySpark | student × subject × edition | Brazil, 2019, 2021, 2023 (2011–2017 next) | ✅ 27.6M records; averages reconciled with INEP (2019 and 2021) |
 | Population Censuses 2010 and 2022 (IBGE) | municipality × age × sex | Brazil | ⏳ |
 | Population projections (IBGE, 2024 revision) | state × age × sex × year | 2000–2070 | ⏳ |
 | Territories (IBGE) | region, state, municipality | Brazil | ⏳ |
@@ -86,6 +86,8 @@ Every problem found in the data becomes three things: an automated test, a fix i
 | 10 | IBGE and INEP swap the codes for *parda* and *amarela* (4/3 × 3/4): joining on the number inverts the groups | `unique` on both codes of `dim_cor_raca` | ✅ |
 | 11 | IDEB spreadsheets: technical header after title rows, unnamed ID columns and a repeated column name (the 2025 pass-rate indicator is labelled 2023) | `unicidade_com_nulos` in silver | ✅ |
 | 12 | INEP per-school indicators: the technical header sometimes lies — school code and name swapped (students per class 2016–2018) and column names shifted relative to the data (pass/fail rates 2018–2020). Bronze fixes it from the shape of the content; silver maps by the human-readable label, not by the column name | `assert_rendimento_soma_100`, `assert_ind_nome_diverge_do_rotulo` (audit) | ✅ |
+| 13 | Student-level SAEB: `ID_ESCOLA` and `ID_MUNICIPIO` look like real codes but are fictitious — 0% match the School Census, and INEP renumbers them every edition. Per-school scores come from IDEB | `make saeb-verificar-escola` | ✅ |
+| 14 | A reconciliation test that passes without comparing anything (a filter on a non-existent label emptied the reference set) | empty-reference guard + test provoked with a wrong value | ✅ |
 
 ## Reconciliation with official numbers
 
@@ -106,6 +108,20 @@ Every computed total is checked against the number published by INEP, recorded w
 | 2022 | 47,382,074 | 47,382,074 | 0 |
 | 2023 | 47,304,632 | 47,304,632 | 0 |
 | 2024 | 47,088,922 | 47,088,922 | 0 |
+
+### SAEB
+
+The weighted average computed from student records (PySpark, 27.6M records) is compared with the averages INEP
+publishes in its `TS_BRASIL` and `TS_UF` spreadsheets — Brazil and every state, all networks, public and private,
+by grade and subject. Test: `assert_saeb_media_bate_com_inep` (tolerance 0.05 points).
+
+| Edition | Official averages compared | Unmatched | Largest difference (SAEB scale points) |
+|---|---|---|---|
+| 2019 | 1,152 | 0 | 0.005 |
+| 2021 | 1,146 | 0 | 0.005 |
+
+The largest difference is the rounding of the spreadsheets, which have two decimals. The 2023 edition does not
+ship results spreadsheets in its zip; its check is pending.
 
 ### IDEB
 
@@ -152,7 +168,7 @@ systems are left out.
 | Teacher qualification, workload and stability; management complexity | `fato_{formacao_docente,esforco_docente,regularidade_docente,complexidade_gestao}_escola_ano` | INEP education indicators, 2015–2025 | ✅ |
 | School socioeconomic level | `fato_inse_escola_edicao` | INSE (INEP) | ✅ |
 | IDEB | `fato_ideb_{escola,municipio,agregado}_ano` | IDEB (INEP), 2005–2025 series | ✅ |
-| Proficiency | `fato_saeb_*` | SAEB, with PySpark | ⏳ |
+| Proficiency (weighted average by state, network and student profile) | `fato_saeb_proficiencia_ano` | Student-level SAEB, with PySpark, 2019–2023 | ✅ |
 | Population (denominator) | `fato_populacao_*` | IBGE | ⏳ |
 
 Left out, because they are not public or belong to a single network: school management systems, state-run
@@ -163,7 +179,7 @@ censuses, internal forms and local household surveys.
 - [x] **v0.1 — Foundation**: medallion structure, Docker, bronze ingestion of the School Census with md5, first dbt models and tests, CI.
 - [ ] **v0.2 — Historical series**: School Census 2014–2024 harmonised ✅, IDEB ✅, INEP indicators and INSE ✅, `dim_tempo` with pandemic phases and electoral-term cycles ✅; still to come: Census 2025 (waiting on INEP) and IBGE territories.
 - [ ] **v0.3 — Population**: IBGE 2010/2022 censuses and projections as denominators; coverage marts.
-- [ ] **v0.4 — Learning**: student-level SAEB with PySpark, aggregated by state, network, stage and student profile (race, sex, socioeconomic level). Per-school scores come from IDEB.
+- [ ] **v0.4 — Learning**: student-level SAEB with PySpark, aggregated by state, network, stage and student profile (race, sex, socioeconomic level) ✅ 2019, 2021 and 2023, reconciled with INEP; 2011–2017 and the 2023 check still to come. Per-school scores come from IDEB.
 - [ ] **v0.5 — Consumption**: gold on BigQuery, public Superset dashboard, Power BI dashboard versioned as PBIP.
 
 ## Glossary

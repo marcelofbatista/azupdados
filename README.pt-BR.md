@@ -24,7 +24,7 @@ O `azupdados` resolve isso uma vez, de forma auditável: preserva os arquivos of
 | IDEB (INEP) | escola, município, UF × edição | 2005–2025 | ✅ |
 | Indicadores educacionais (INEP) — rendimento, distorção idade-série, alunos por turma, horas-aula, formação, esforço e regularidade docente, complexidade de gestão | escola × ano × etapa/série | Brasil, 2015–2025 | ✅ 2015–2025 na base real; aprovação + reprovação + abandono somam 100% (±0,5 p.p.) nas 12,3 mi linhas |
 | INSE — nível socioeconômico (INEP) | escola × edição do SAEB | 2011–2013, 2015, 2019, 2021, 2023 | ✅ (metodologias anteriores a 2019 marcadas como não comparáveis) |
-| SAEB (INEP) — microdados | aluno × edição | 2011–2023 | ⏳ |
+| SAEB (INEP) — microdados por aluno, com PySpark | aluno × disciplina × edição | Brasil, 2019, 2021, 2023 (2011–2017 em seguida) | ✅ 27,6 milhões de registros; médias reconciliadas com o INEP (2019 e 2021) |
 | Censos Demográficos 2010 e 2022 (IBGE) | município × idade × sexo | Brasil | ⏳ |
 | Projeções de população (IBGE, revisão 2024) | UF × idade × sexo × ano | 2000–2070 | ⏳ |
 | Territórios (IBGE) | região, UF, município | Brasil | ⏳ |
@@ -84,6 +84,8 @@ Cada problema encontrado nos dados vira três coisas: um teste automatizado, uma
 | 10 | IBGE e INEP trocam os códigos de parda e amarela (4/3 × 3/4): juntar pelo número inverte os grupos | `unique` nos dois códigos de `dim_cor_raca` | ✅ |
 | 11 | Planilhas do IDEB: cabeçalho técnico depois de linhas de título, colunas de identificação sem nome e nome de coluna repetido (o indicador de rendimento de 2025 sai rotulado como 2023) | `unicidade_com_nulos` na silver | ✅ |
 | 12 | Indicadores do INEP por escola: o cabeçalho técnico às vezes mente — código e nome da escola trocados (ATU 2016–2018) e nomes de coluna deslocados em relação aos dados (rendimento 2018–2020). A bronze corrige pela forma do conteúdo; a silver mapeia pelo rótulo, não pelo nome | `assert_rendimento_soma_100`, `assert_ind_nome_diverge_do_rotulo` (auditoria) | ✅ |
+| 13 | SAEB por aluno: `ID_ESCOLA` e `ID_MUNICIPIO` têm formato de código real, mas são fictícios — 0% casa com o Censo, e o INEP renumera a cada edição. Nota por escola vem do IDEB | `make saeb-verificar-escola` | ✅ |
+| 14 | Teste de reconciliação que passa sem comparar nada (filtro com rótulo inexistente esvaziou o gabarito) | guarda de gabarito vazio + teste provocado com valor errado | ✅ |
 
 ## Reconciliação com números oficiais
 
@@ -104,6 +106,20 @@ Todo total calculado é conferido contra o número publicado pelo INEP, registra
 | 2022 | 47.382.074 | 47.382.074 | 0 |
 | 2023 | 47.304.632 | 47.304.632 | 0 |
 | 2024 | 47.088.922 | 47.088.922 | 0 |
+
+### SAEB
+
+A média ponderada calculada a partir dos alunos (PySpark, 27,6 milhões de registros) é comparada com as médias
+que o INEP publica nas planilhas `TS_BRASIL` e `TS_UF`, para o Brasil e cada UF, todas as redes, rede pública e
+rede privada, por série e disciplina. Teste: `assert_saeb_media_bate_com_inep` (tolerância de 0,05 ponto).
+
+| Edição | Médias oficiais comparadas | Sem par no cálculo | Maior diferença (pontos na escala SAEB) |
+|---|---|---|---|
+| 2019 | 1.152 | 0 | 0,005 |
+| 2021 | 1.146 | 0 | 0,005 |
+
+A maior diferença é o arredondamento das planilhas, que vêm com duas casas. A edição 2023 não traz as planilhas
+de resultados no zip; a conferência dela está pendente.
 
 ### IDEB
 
@@ -149,7 +165,7 @@ ganha aqui uma versão nacional; as que dependem de sistemas internos de uma red
 | Formação, esforço e regularidade docente; complexidade de gestão | `fato_{formacao_docente,esforco_docente,regularidade_docente,complexidade_gestao}_escola_ano` | Indicadores Educacionais (INEP), 2015–2025 | ✅ |
 | Nível socioeconômico da escola | `fato_inse_escola_edicao` | INSE (INEP) | ✅ |
 | IDEB | `fato_ideb_{escola,municipio,agregado}_ano` | IDEB (INEP), série 2005–2025 | ✅ |
-| Proficiência | `fato_saeb_*` | SAEB, com PySpark | ⏳ |
+| Proficiência (média ponderada por UF, rede e perfil do aluno) | `fato_saeb_proficiencia_ano` | SAEB por aluno, com PySpark, 2019–2023 | ✅ |
 | População (denominador) | `fato_populacao_*` | IBGE | ⏳ |
 
 Ficam de fora, por não serem públicas ou por serem de uma só rede: sistemas de gestão escolar, censos
@@ -160,7 +176,7 @@ estaduais próprios, formulários internos e pesquisas domiciliares locais.
 - [x] **v0.1 — Fundação**: estrutura medalhão, Docker, ingestão bronze do Censo Escolar com md5, primeiros modelos e testes dbt, CI.
 - [ ] **v0.2 — Série histórica**: Censo Escolar 2014–2024 harmonizado ✅, IDEB ✅, indicadores do INEP e INSE ✅, `dim_tempo` com fases da pandemia e ciclos de mandato ✅; faltam Censo 2025 (aguarda o INEP) e territórios IBGE.
 - [ ] **v0.3 — População**: Censos 2010/2022 e projeções do IBGE como denominador; marts de atendimento.
-- [ ] **v0.4 — Aprendizagem**: SAEB por aluno com PySpark, agregado por UF, rede, etapa e perfil do aluno (cor/raça, sexo, nível socioeconômico). A nota por escola vem do IDEB.
+- [ ] **v0.4 — Aprendizagem**: SAEB por aluno com PySpark, agregado por UF, rede, etapa e perfil do aluno (cor/raça, sexo, nível socioeconômico) ✅ 2019, 2021 e 2023, reconciliado com o INEP; faltam 2011–2017 e a conferência de 2023. A nota por escola vem do IDEB.
 - [ ] **v0.5 — Consumo**: gold no BigQuery, painel público no Superset, painel Power BI versionado em PBIP.
 
 ## Sobre o autor
