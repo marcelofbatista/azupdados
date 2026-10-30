@@ -69,7 +69,8 @@ def main() -> None:
         peso = F.when(tem_prof, F.col("peso_aluno"))
         agregado = alunos.groupBy(*CHAVES).agg(
             F.count(F.lit(1)).alias("n_alunos"),
-            F.sum((F.col("in_presenca") == 1).cast("int")).alias("n_presentes"),
+            # presença ausente no arquivo (coluna nula no grupo inteiro) conta como 0, não como nulo
+            F.sum(F.coalesce((F.col("in_presenca") == 1).cast("int"), F.lit(0))).alias("n_presentes"),
             F.sum(F.col("proficiencia_saeb").isNotNull().cast("int")).alias("n_com_proficiencia"),
             F.sum(peso).alias("soma_peso"),
             F.sum(peso * F.col("proficiencia_saeb")).alias("soma_peso_prof"),
