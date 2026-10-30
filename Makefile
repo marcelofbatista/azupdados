@@ -4,7 +4,7 @@ PY    := $(VENV)/bin/python
 DBT_THREADS ?= 2
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
-.PHONY: setup up down psql sql bronze-censo censo-baixar sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores saeb-sondar saeb-baixar saeb-inventario spark-setup saeb-dicionario saeb-bronze saeb-verificar-escola saeb-silver saeb-agregar dbt-deps dbt-build dbt-build-full dbt-docs lint
+.PHONY: setup up down psql sql bronze-censo censo-baixar sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores saeb-sondar saeb-baixar saeb-inventario spark-setup saeb-dicionario saeb-bronze saeb-verificar-escola saeb-silver saeb-agregar bronze-saeb-resultados dbt-deps dbt-build dbt-build-full dbt-docs lint
 
 setup:            ## cria o venv e instala dependências
 	python3 -m venv $(VENV)
@@ -87,6 +87,9 @@ saeb-silver:      ## SAEB: edições harmonizadas, aluno × disciplina, perfil d
 
 saeb-agregar:     ## SAEB: agrega com PySpark e carrega silver.saeb_agregado no Postgres  [ANOS=2019,2021,2023]
 	set -a; source .env; set +a; PYTHONPATH=spark $(PY) spark/agregar_saeb.py --anos $(ANOS)
+
+bronze-saeb-resultados: ## carrega as médias oficiais do SAEB (TS_BRASIL, TS_UF) — gabarito da reconciliação
+	set -a; source .env; set +a; $(PY) ingest/bronze_saeb_resultados.py
 
 dbt-deps:
 	set -a; source .env; set +a; $(DBT) deps

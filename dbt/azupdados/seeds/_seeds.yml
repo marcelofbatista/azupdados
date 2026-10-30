@@ -136,3 +136,10 @@ seeds:
               arguments:
                 to: ref('dim_uf')
                 field: co_uf
+  - name: dim_serie_saeb
+    description: >
+      Séries avaliadas pelo SAEB (código ID_SERIE do INEP). O 2º ano usa escala própria, centrada em 750, e é
+      amostral; as demais usam a escala SAEB (0–500). 3ª e 4ª séries do médio vêm no mesmo arquivo (34EM).
+    columns:
+      - name: serie_saeb
+        tests: [unique, not_null]

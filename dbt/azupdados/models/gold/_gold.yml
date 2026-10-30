@@ -343,3 +343,51 @@ models:
               arguments:
                 to: ref('dim_rede_ideb')
                 field: rede
+
+  - name: fato_saeb_proficiencia_ano
+    description: >
+      Proficiência no SAEB a partir dos microdados por aluno, agregada com PySpark. Grão — edição × série × UF ×
+      rede × localização × área × disciplina × cor/raça × sexo × nível INSE × situação no Censo. Medidas são
+      somas: média ponderada de qualquer recorte = sum(soma_peso_prof) / sum(soma_peso). Sem escola nem
+      município (códigos fictícios no arquivo público; ver docs/armadilhas/13). Sexo não existe em 2019;
+      nível INSE do aluno só em 2021 e 2023; o 2º ano não tem questionário.
+    columns:
+      - name: fato_saeb_proficiencia_ano_sk
+        tests: [unique, not_null]
+      - name: ano_saeb
+        tests: [not_null]
+      - name: serie_saeb
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_serie_saeb')
+                field: serie_saeb
+              config:
+                severity: warn
+      - name: disciplina
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['LP', 'MT', 'CH', 'CN']
+      - name: cor_raca_sk
+        description: Nulo quando o aluno não respondeu ao questionário (ou é do 2º ano, que não tem questionário).
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_cor_raca')
+                field: cor_raca_sk
+      - name: sexo_codigo
+        description: 1 masculino, 2 feminino, 9 não quis declarar (2023). Nulo — não respondeu ou edição sem a pergunta (2019).
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 9]
+      - name: nivel_inse
+        description: Nível socioeconômico do aluno (1–8), só quando o INEP calculou o índice (IN_INSE = 1).
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 8
+      - name: proficiencia_media
+        description: Média ponderada da própria linha. Não somar nem tirar média dela — use as somas.

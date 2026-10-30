@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import os
+from pathlib import Path
 
 import psycopg
 from pyspark.sql import functions as F
@@ -36,18 +37,7 @@ CHAVES = ["ano", "arquivo", "id_serie", "id_uf", "in_publica", "id_localizacao",
           "cor_raca_censo", "sexo_codigo", "nivel_inse", "in_situacao_censo"]
 MEDIDAS = ["n_alunos", "n_presentes", "n_com_proficiencia", "soma_peso", "soma_peso_prof", "soma_peso_prof2"]
 
-DDL = f"""
-create table if not exists {TABELA} (
-    ano int not null, arquivo text not null, id_serie int, id_uf int, in_publica int, id_localizacao int,
-    id_area int, disciplina text not null, cor_raca_censo int, sexo_codigo int, nivel_inse int,
-    in_situacao_censo int,
-    n_alunos bigint not null, n_presentes bigint not null, n_com_proficiencia bigint not null,
-    soma_peso double precision, soma_peso_prof double precision, soma_peso_prof2 double precision,
-    carregado_em timestamptz not null default now()
-);
-comment on table {TABELA} is
-  'SAEB por aluno agregado pelo PySpark (spark/agregar_saeb.py) a partir da silver em Parquet. Medidas aditivas.';
-"""
+DDL = Path("sql/init/02_saeb.sql").read_text()  # mesma definição usada no CI e na criação do banco
 
 
 def conninfo() -> str:

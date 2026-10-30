@@ -71,3 +71,18 @@ models:
       - unicidade_com_nulos:
           arguments:
             colunas: [no_territorio, rede, etapa, metrica, sufixo, ano_ideb]
+
+  - name: stg_saeb__resultado_oficial
+    description: >
+      Médias oficiais do SAEB publicadas pelo INEP (TS_BRASIL, TS_UF), tipadas. `serie_saeb_oficial` 14 é o
+      ensino médio inteiro. Gabarito do teste `assert_saeb_media_bate_com_inep`.
+    columns:
+      - name: ano_saeb
+        tests: [not_null]
+      - name: abrangencia
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['BRASIL', 'UF']
+      - name: media_oficial
+        tests: [not_null]

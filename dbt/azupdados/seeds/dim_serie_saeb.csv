@@ -1,0 +1,6 @@
+serie_saeb,etapa_saeb,arquivo_saeb,nome_serie,escala,eh_censitaria
+2,2EF,2EF,2º ano do ensino fundamental,alfabetização (centrada em 750),false
+5,5EF,5EF,5º ano do ensino fundamental,SAEB (0–500),true
+9,9EF,9EF,9º ano do ensino fundamental,SAEB (0–500),true
+12,EM,34EM,3ª série do ensino médio,SAEB (0–500),true
+13,EM,34EM,4ª série do ensino médio (integrado),SAEB (0–500),true

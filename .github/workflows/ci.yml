@@ -46,6 +46,10 @@ jobs:
           python ingest/bronze_sedap.py --pasta data/fixtures/sedap
           python ingest/bronze_ideb.py --pasta data/fixtures/ideb
           python ingest/bronze_indicadores.py --pasta data/fixtures/indicadores --min-escolas 1
+          PGPASSWORD=ci psql -h localhost -U azupdados -d azupdados -f sql/init/02_saeb.sql
+          PGPASSWORD=ci psql -h localhost -U azupdados -d azupdados \
+            -c "\\copy silver.saeb_agregado (ano,arquivo,id_serie,id_uf,in_publica,id_localizacao,id_area,disciplina,cor_raca_censo,sexo_codigo,nivel_inse,in_situacao_censo,n_alunos,n_presentes,n_com_proficiencia,soma_peso,soma_peso_prof,soma_peso_prof2) from 'data/fixtures/saeb/saeb_agregado.csv' csv header"
+          python ingest/bronze_saeb_resultados.py --pasta data/fixtures/saeb
       - name: dbt build (silver + gold + testes)
         working-directory: dbt/azupdados
         run: |

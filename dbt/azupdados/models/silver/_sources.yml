@@ -10,9 +10,24 @@ sources:
           especial por tipo, UF e dependência, com privacidade diferencial. Formato longo.
       - name: sedap_ee_tipo_estatisticas
         description: Estatísticas de privacidade diferencial (ruído, IC 95%) por métrica e ano.
+      - name: saeb_resultado_oficial
+        description: >
+          Médias oficiais do SAEB publicadas pelo INEP (planilhas TS_BRASIL e TS_UF dentro do zip dos
+          microdados), formato longo, tudo como texto. Gravada por `ingest/bronze_saeb_resultados.py`.
+          É o gabarito da reconciliação do SAEB. A edição 2023 não traz essas planilhas.
       - name: ind_colunas
         description: >
           Dicionário das colunas dos indicadores INEP por escola, gravado por `ingest/bronze_indicadores.py`:
           sigla, ano, posição, nome técnico e rótulo legível (linhas de título acima do cabeçalho técnico).
           As tabelas de dados são `bronze.ind_<sigla>_<ano>`, uma por arquivo, lidas pela macro
           `ind_por_escola` a partir deste dicionário.
+
+  - name: spark
+    schema: silver
+    description: Tabelas produzidas pelos scripts PySpark de `spark/` e carregadas no Postgres.
+    tables:
+      - name: saeb_agregado
+        description: >
+          SAEB por aluno agregado pelo PySpark (`spark/agregar_saeb.py`). Grão — ano × série × UF × rede ×
+          localização × área × disciplina × cor/raça × sexo × nível INSE × situação no Censo. Medidas aditivas
+          (somas), para que qualquer recorte reproduza a média ponderada exata. Definição em `sql/init/02_saeb.sql`.

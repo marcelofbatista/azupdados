@@ -1,0 +1,7 @@
+ano,arquivo,id_serie,id_uf,in_publica,id_localizacao,id_area,disciplina,cor_raca_censo,sexo_codigo,nivel_inse,in_situacao_censo,n_alunos,n_presentes,n_com_proficiencia,soma_peso,soma_peso_prof,soma_peso_prof2
+2019,5EF,5,53,1,1,2,LP,1,,,1,100,100,100,100.0,21000.0,4410000.0
+2019,5EF,5,53,0,1,2,LP,3,,,1,50,50,50,50.0,12000.0,2880000.0
+2019,5EF,5,52,1,1,2,LP,2,,,1,50,50,50,50.0,10000.0,2000000.0
+2019,5EF,5,53,1,1,2,MT,1,,,1,100,100,100,100.0,22000.0,4840000.0
+2019,9EF,9,53,1,1,2,LP,3,,,1,80,80,80,80.0,20400.0,5202000.0
+2019,34EM,12,53,1,1,2,MT,,,,1,60,60,60,60.0,16500.0,4537500.0
