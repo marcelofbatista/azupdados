@@ -10,6 +10,7 @@ data/bronze/*
 !data/landing/.gitkeep
 !data/bronze/.gitkeep
 data/certs/
+data/spark_tmp/
 
 # python
 .venv/
