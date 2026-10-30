@@ -163,7 +163,7 @@ censuses, internal forms and local household surveys.
 - [x] **v0.1 — Foundation**: medallion structure, Docker, bronze ingestion of the School Census with md5, first dbt models and tests, CI.
 - [ ] **v0.2 — Historical series**: School Census 2014–2024 harmonised ✅, IDEB ✅, INEP indicators and INSE ✅, `dim_tempo` with pandemic phases and electoral-term cycles ✅; still to come: Census 2025 (waiting on INEP) and IBGE territories.
 - [ ] **v0.3 — Population**: IBGE 2010/2022 censuses and projections as denominators; coverage marts.
-- [ ] **v0.4 — Learning**: student-level SAEB with PySpark, aggregated by school and municipality.
+- [ ] **v0.4 — Learning**: student-level SAEB with PySpark, aggregated by state, network, stage and student profile (race, sex, socioeconomic level). Per-school scores come from IDEB.
 - [ ] **v0.5 — Consumption**: gold on BigQuery, public Superset dashboard, Power BI dashboard versioned as PBIP.
 
 ## Glossary

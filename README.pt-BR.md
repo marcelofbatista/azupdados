@@ -160,7 +160,7 @@ estaduais próprios, formulários internos e pesquisas domiciliares locais.
 - [x] **v0.1 — Fundação**: estrutura medalhão, Docker, ingestão bronze do Censo Escolar com md5, primeiros modelos e testes dbt, CI.
 - [ ] **v0.2 — Série histórica**: Censo Escolar 2014–2024 harmonizado ✅, IDEB ✅, indicadores do INEP e INSE ✅, `dim_tempo` com fases da pandemia e ciclos de mandato ✅; faltam Censo 2025 (aguarda o INEP) e territórios IBGE.
 - [ ] **v0.3 — População**: Censos 2010/2022 e projeções do IBGE como denominador; marts de atendimento.
-- [ ] **v0.4 — Aprendizagem**: SAEB por aluno com PySpark, agregados por escola e município.
+- [ ] **v0.4 — Aprendizagem**: SAEB por aluno com PySpark, agregado por UF, rede, etapa e perfil do aluno (cor/raça, sexo, nível socioeconômico). A nota por escola vem do IDEB.
 - [ ] **v0.5 — Consumo**: gold no BigQuery, painel público no Superset, painel Power BI versionado em PBIP.
 
 ## Sobre o autor
