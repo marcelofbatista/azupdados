@@ -4,7 +4,7 @@ PY    := $(VENV)/bin/python
 DBT_THREADS ?= 2
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
-.PHONY: setup up down psql sql bronze-censo censo-baixar sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores saeb-sondar saeb-baixar saeb-inventario spark-setup saeb-dicionario saeb-bronze dbt-deps dbt-build dbt-build-full dbt-docs lint
+.PHONY: setup up down psql sql bronze-censo censo-baixar sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores saeb-sondar saeb-baixar saeb-inventario spark-setup saeb-dicionario saeb-bronze saeb-verificar-escola dbt-deps dbt-build dbt-build-full dbt-docs lint
 
 setup:            ## cria o venv e instala dependências
 	python3 -m venv $(VENV)
@@ -78,6 +78,9 @@ saeb-dicionario:  ## mostra no dicionário oficial onde estão sexo, cor/raça e
 
 saeb-bronze:      ## SAEB por aluno: CSV oficial → Parquet com PySpark  [ANOS=2019,2021,2023 ARQ=5EF]
 	set -a; source .env; set +a; PYTHONPATH=spark $(PY) spark/bronze_saeb.py --anos $(ANOS) $(if $(ARQ),--arquivos $(ARQ))
+
+saeb-verificar-escola: ## o ID_ESCOLA do SAEB é o código real? cruza com gold.dim_escola (escola e município)
+	set -a; source .env; set +a; PYTHONPATH=spark $(PY) spark/verificar_escola_saeb.py
 
 dbt-deps:
 	set -a; source .env; set +a; $(DBT) deps
