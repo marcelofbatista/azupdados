@@ -40,10 +40,10 @@ def planilha(abrangencia: str) -> bytes:
     ident = ["ID"] if abrangencia == "BRASIL" else ["CO_UF", "NO_UF"]
     ws.append([*ident, "DEPENDENCIA_ADM", "LOCALIZACAO", "CAPITAL", "MEDIA_5_LP", "MEDIA_5_MT", "MEDIA_9_LP"])
     if abrangencia == "BRASIL":
-        ws.append(["Brasil", "Total", "Total", "Total", media(lambda x: x[0] == "5EF" and x[4] == "LP"),
+        ws.append(["Brasil", "Total - Federal, Estadual, Municipal e Privada", "Total", "Total", media(lambda x: x[0] == "5EF" and x[4] == "LP"),
                    media(lambda x: x[0] == "5EF" and x[4] == "MT"), media(lambda x: x[0] == "9EF")])
     else:
-        ws.append([53, "Distrito Federal", "Total", "Total", "Total",
+        ws.append([53, "Distrito Federal", "Total - Federal, Estadual, Municipal e Privada", "Total", "Total",
                    media(lambda x: x[0] == "5EF" and x[4] == "LP" and x[2] == 53),
                    media(lambda x: x[0] == "5EF" and x[4] == "MT" and x[2] == 53), media(lambda x: x[0] == "9EF")])
     buf = io.BytesIO()
