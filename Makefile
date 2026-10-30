@@ -4,7 +4,7 @@ PY    := $(VENV)/bin/python
 DBT_THREADS ?= 2
 DBT   := cd dbt/azupdados && DBT_PROFILES_DIR=. ../../$(VENV)/bin/dbt
 
-.PHONY: setup up down psql sql bronze-censo censo-baixar sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores saeb-sondar saeb-baixar saeb-inventario dbt-deps dbt-build dbt-build-full dbt-docs lint
+.PHONY: setup up down psql sql bronze-censo censo-baixar sedap-extrair bronze-sedap bronze-ideb certs-inep indicadores-sondar indicadores-baixar bronze-indicadores saeb-sondar saeb-baixar saeb-inventario spark-setup saeb-dicionario saeb-bronze dbt-deps dbt-build dbt-build-full dbt-docs lint
 
 setup:            ## cria o venv e instala dependências
 	python3 -m venv $(VENV)
@@ -67,6 +67,17 @@ saeb-baixar:      ## baixa os zips do SAEB para data/landing/saeb/_zips (+ manif
 
 saeb-inventario:  ## lista o conteúdo dos zips do SAEB sem extrair (arquivos, tamanhos, cabeçalhos)
 	$(PY) ingest/baixar_saeb_inep.py --inventario
+
+spark-setup:      ## instala o PySpark no venv (o Java vem antes: sudo apt-get install -y openjdk-17-jre-headless)
+	@command -v java >/dev/null || (echo "Falta o Java: sudo apt-get install -y openjdk-17-jre-headless" && exit 1)
+	java -version 2>&1 | head -1
+	$(VENV)/bin/pip install -r requirements-spark.txt
+
+saeb-dicionario:  ## mostra no dicionário oficial onde estão sexo, cor/raça e INSE em cada edição  [TERMOS="..."]
+	$(PY) ingest/saeb_dicionario.py $(if $(TERMOS),--termos "$(TERMOS)")
+
+saeb-bronze:      ## SAEB por aluno: CSV oficial → Parquet com PySpark  [ANOS=2019,2021,2023 ARQ=5EF]
+	set -a; source .env; set +a; PYTHONPATH=spark $(PY) spark/bronze_saeb.py --anos $(ANOS) $(if $(ARQ),--arquivos $(ARQ))
 
 dbt-deps:
 	set -a; source .env; set +a; $(DBT) deps

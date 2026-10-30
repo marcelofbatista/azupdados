@@ -34,7 +34,7 @@ jobs:
           pip install -r requirements.txt
           cp dbt/azupdados/profiles.yml.example dbt/azupdados/profiles.yml
       - name: Lint (Python)
-        run: ruff check ingest
+        run: ruff check ingest spark
       - name: Criar schemas do medalhão
         run: PGPASSWORD=ci psql -h localhost -U azupdados -d azupdados -f sql/init/01_schemas.sql
       - name: Bronze — carregar fixtures sintéticas
