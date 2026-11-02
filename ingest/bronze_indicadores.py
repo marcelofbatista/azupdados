@@ -5,6 +5,8 @@ Cada arquivo vira uma tabela só-texto, com o cabeçalho técnico do INEP como v
   bronze.ind_<sigla>_<ano>          ex.: bronze.ind_rend_2015, bronze.ind_tdi_2025, bronze.ind_inse_2023
   bronze.ind_colunas                dicionário: sigla, ano, posição, nome técnico, rótulo (linhas de título
                                     acima do cabeçalho técnico, com células mescladas propagadas)
+  meta.ind_perfil_coluna            perfil de cada coluna (proporção de "--", de vazio, de número); a carga
+                                    compara com o ano anterior e imprime DERIVA (sql/init/03_perfil_colunas.sql)
 
 Cuidados (armadilha 12):
   - Cada zip traz o MESMO conteúdo em .xlsx e .ods, mais um md5 oficial do INEP. Carrega só o .xlsx e confere
@@ -227,6 +229,29 @@ def conninfo() -> str:
     )
 
 
+NUMERO = re.compile(r"-?\d+([.,]\d+)?")
+
+
+def perfil(nomes, rotulos, linhas) -> list[tuple]:
+    """Uma linha por coluna: (posição, nome, rótulo, linhas, com "--", vazias, numéricas)."""
+    saida = []
+    for i, (n, r) in enumerate(zip(nomes, rotulos)):
+        vals = [linha[i] for linha in linhas]
+        saida.append((i + 1, n, r or None, len(vals), sum(v == "--" for v in vals), sum(v is None for v in vals),
+                      sum(bool(v and NUMERO.fullmatch(v)) for v in vals)))
+    return saida
+
+
+def derivas(conn, sig, ano) -> list[tuple]:
+    """Colunas deste arquivo cujo perfil mudou em relação ao ano anterior do mesmo indicador."""
+    with conn.cursor() as cur:
+        cur.execute("""select ano_anterior, pareado_por, posicao, nome_tecnico, rotulo,
+                              pct_ausente_anterior, pct_ausente, pct_numerico_anterior, pct_numerico
+                       from meta.ind_deriva_perfil where sigla = %s and ano = %s
+                       order by pareado_por, posicao""", (sig, ano))
+        return cur.fetchall()
+
+
 def carregar(conn, sig, ano, arq, nomes, rotulos, linhas, interno, confere) -> None:
     from psycopg import sql
 
@@ -249,6 +274,9 @@ def carregar(conn, sig, ano, arq, nomes, rotulos, linhas, interno, confere) -> N
             "INSERT INTO bronze.ind_colunas VALUES (%s, %s, %s, %s, %s, %s)",
             [(sig, ano, i + 1, n, r or None, f"bronze.{tabela}") for i, (n, r) in enumerate(zip(nomes, rotulos))],
         )
+        cur.execute("DELETE FROM meta.ind_perfil_coluna WHERE sigla = %s AND ano = %s", (sig, ano))
+        cur.executemany("INSERT INTO meta.ind_perfil_coluna VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                        [(sig, ano, *c) for c in perfil(nomes, rotulos, linhas)])
         cur.execute(
             """INSERT INTO meta.carga_arquivo
                  (fonte, ano_referencia, arquivo, md5, md5_oficial_ok, tabela_destino, linhas, colunas)
@@ -289,6 +317,9 @@ def main() -> None:
         import psycopg
 
         conn = psycopg.connect(conninfo())
+        conn.execute(Path("sql/init/03_perfil_colunas.sql").read_text())
+        conn.commit()
+    com_deriva = []
     try:
         for sig, ano, arq in lista:
             dados, interno, confere = abrir_planilha(arq)
@@ -308,6 +339,14 @@ def main() -> None:
                 print("      " + " ".join(nomes))
                 continue
             carregar(conn, sig, ano, arq, nomes, rotulos, linhas, interno, confere)
+            achadas = derivas(conn, sig, ano)
+            if achadas:
+                com_deriva.append(f"{sig} {ano} ({len(achadas)} colunas)")
+            for ant, por, pos, nome, rot, aa, a, na, nn in achadas[:8]:
+                print(f"      DERIVA vs {ant}, pareado por {por}: col {pos} {nome} ({rot}) — "
+                      f'"--" {aa:.0%} → {a:.0%}, número {na:.0%} → {nn:.0%}')
+            if len(achadas) > 8:
+                print(f"      ... e mais {len(achadas) - 8} (select * from meta.ind_deriva_perfil)")
     finally:
         if conn is not None:
             conn.close()
@@ -315,6 +354,8 @@ def main() -> None:
         print(f"\nmd5 divergente do .txt oficial (carregados mesmo assim, conferir): {divergentes}")
     if sem_cabecalho:
         print(f"\nArquivos PULADOS sem cabeçalho reconhecível: {sem_cabecalho}")
+    if com_deriva:
+        print(f"\nPerfil de coluna diferente do ano anterior (conferir antes de usar a série): {com_deriva}")
     if poucas:
         print(f"\nArquivos com menos de {MIN_ESCOLAS:,} escolas (NÃO usar até explicar): {poucas}")
 

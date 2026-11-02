@@ -22,6 +22,17 @@ sources:
           As tabelas de dados são `bronze.ind_<sigla>_<ano>`, uma por arquivo, lidas pela macro
           `ind_por_escola` a partir deste dicionário.
 
+  - name: meta
+    schema: meta
+    description: Metadados de carga gravados pelos scripts de `ingest/`.
+    tables:
+      - name: ind_deriva_perfil
+        description: >
+          Colunas dos indicadores INEP por escola cujo perfil (proporção de "--" e de valores numéricos) mudou
+          10 pontos ou mais em relação ao ano anterior do mesmo indicador, pareadas pelo nome técnico e pelo
+          rótulo. View sobre `meta.ind_perfil_coluna`, gravada na carga. Definição em
+          `sql/init/03_perfil_colunas.sql`.
+
   - name: spark
     schema: silver
     description: Tabelas produzidas pelos scripts PySpark de `spark/` e carregadas no Postgres.

@@ -3,6 +3,7 @@
 Reproduzem de propósito a armadilha 12:
   - ATU 2017: rótulos de código e nome da escola/município trocados no cabeçalho técnico;
   - Rendimento 2018 e ATU 2017: nomes técnicos deslocados em relação aos rótulos (o dado segue o rótulo);
+    rendimento 2017 vem certo, para o teste de deriva de perfil ter o ano anterior com que comparar;
   - as duas gerações de nomes técnicos (tap_f14 × 1_cat_fun_ai, mird × edu_bas_cat_0...);
   - zip com .xlsx + .ods + md5 oficial; '--' como ausente; nota de rodapé no fim.
 
@@ -219,6 +220,8 @@ def inse(ano):
 
 
 def main():
+    # 2017 sem defeito: é o "ano anterior" que o teste de deriva compara com 2018 (sql/init/03_perfil_colunas.sql)
+    zipar("rendimento", "TX_REND_ESCOLAS_2017.zip", "TX_REND_ESCOLAS_2017", rendimento(2017, True, False))
     zipar("rendimento", "TX_REND_ESCOLAS_2018.zip", "TX_REND_ESCOLAS_2018", rendimento(2018, True, True))
     zipar("rendimento", "tx_rend_escolas_2021.zip", "tx_rend_escolas_2021", rendimento(2021, False, False))
     zipar("tdi", "TDI_2016_ESCOLAS.zip", "TDI_ESCOLAS_2016", etapa_unica(2016, True, "tdi", "ESCOLAS", False))

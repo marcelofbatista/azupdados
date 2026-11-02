@@ -39,9 +39,26 @@ em `bronze.ind_colunas`, não pelo nome técnico. O modelo `stg_ind__mapa_coluna
 cada arquivo, a etapa que o rótulo indica e a que o nome indicaria. Na base real, eles divergem em quatro
 arquivos — rendimento 2018, 2019 e 2020 (18 colunas cada) e ATU 2018 (6 colunas) — e só neles.
 
-**Prova na base real:** o teste `assert_rendimento_soma_100` exige aprovação + reprovação + abandono = 100 em
-cada escola, etapa e ano. Ele passa em todos os 12,3 milhões de linhas de 2015–2025, inclusive 2018–2020; se
-alguma coluna tivesse sido lida na etapa errada, a soma quebraria em milhares de escolas.
+**O que a soma de 100 prova, e o que não prova.** O teste `assert_rendimento_soma_100` exige aprovação +
+reprovação + abandono = 100 em cada escola, etapa e ano, e passa nos 12,3 milhões de linhas de 2015–2025.
+Ele garante que as três taxas de cada etapa foram lidas juntas. **Não garante que a etapa é a certa:** o INEP
+deslocou os nomes da mesma forma nos três blocos, então ler `tap_f04`, `tre_f04` e `tab_f04` de 2018 pelo
+nome dá uma soma de 100 perfeita, só que de anos finais rotulada como 5º ano. Nas fixtures, a escola 99000002
+em 2018 tem 92 + 8 + 0 = 100 nessas três colunas. Uma versão anterior deste texto dizia que a soma quebraria;
+estava errada (apontado num comentário no LinkedIn).
+
+**Deriva de perfil (teste de esquema, separado da regra de negócio).** O que pega o deslocamento é a contagem
+de `--` da tabela acima, agora automática. A carga grava o perfil de cada coluna (`meta.ind_perfil_coluna`:
+proporção de `--`, de vazio, de número) e compara com o ano anterior do mesmo indicador, pareando pelo nome
+técnico e pelo rótulo (`meta.ind_deriva_perfil`, em `sql/init/03_perfil_colunas.sql`). Mudança de 10 pontos ou
+mais sai como `DERIVA` no log da carga, antes de alguém olhar a série, e fica registrada no teste
+`assert_ind_perfil_igual_ao_ano_anterior` (severidade warn). Compara proporções, não contagens, porque a
+cobertura muda de verdade entre anos. Nas fixtures, o rendimento 2018 gera 6 alertas pareados pelo nome
+(`tap_f04`, `tap_f58` e as equivalentes de reprovação e abandono) e nenhum pelo rótulo — exatamente o
+diagnóstico: o nome mudou de significado, o rótulo não.
+
+Os testes ficam em duas pastas: `tests/qualidade` (regra de negócio: o dado faz sentido?) e `tests/estrutura`
+(a coluna ainda é o que era?).
 
 ## Outras características (não são erro, mas exigem cuidado)
 
