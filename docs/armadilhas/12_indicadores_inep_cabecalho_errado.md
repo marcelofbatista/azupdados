@@ -47,15 +47,26 @@ nome dá uma soma de 100 perfeita, só que de anos finais rotulada como 5º ano.
 em 2018 tem 92 + 8 + 0 = 100 nessas três colunas. Uma versão anterior deste texto dizia que a soma quebraria;
 estava errada (apontado num comentário no LinkedIn).
 
-**Deriva de perfil (teste de esquema, separado da regra de negócio).** O que pega o deslocamento é a contagem
-de `--` da tabela acima, agora automática. A carga grava o perfil de cada coluna (`meta.ind_perfil_coluna`:
-proporção de `--`, de vazio, de número) e compara com o ano anterior do mesmo indicador, pareando pelo nome
-técnico e pelo rótulo (`meta.ind_deriva_perfil`, em `sql/init/03_perfil_colunas.sql`). Mudança de 10 pontos ou
-mais sai como `DERIVA` no log da carga, antes de alguém olhar a série, e fica registrada no teste
-`assert_ind_perfil_igual_ao_ano_anterior` (severidade warn). Compara proporções, não contagens, porque a
-cobertura muda de verdade entre anos. Nas fixtures, o rendimento 2018 gera 6 alertas pareados pelo nome
-(`tap_f04`, `tap_f58` e as equivalentes de reprovação e abandono) e nenhum pelo rótulo — exatamente o
-diagnóstico: o nome mudou de significado, o rótulo não.
+**Deriva de esquema (teste separado da regra de negócio).** O que pega o deslocamento é comparar cada coluna
+com o ano anterior. A carga grava o perfil de cada coluna (`meta.ind_perfil_coluna`: proporção de `--`, de
+vazio, de número) e a view `meta.ind_deriva_perfil` (em `sql/init/03_perfil_colunas.sql`) compara com o ano
+anterior do mesmo indicador, pareando pelo nome técnico e pelo rótulo. Alerta por dois motivos:
+
+- **perfil:** a proporção de `--` ou de números mudou 10 pontos ou mais (proporção, não contagem, porque a
+  cobertura muda de verdade entre anos). No rendimento real, `tap_f04` vai de 27% de `--` em 2017 para 54% em 2018.
+- **rótulo:** pareado pelo nome, a etapa do rótulo não é a do ano anterior (`tap_f04` era "5º ano" e virou
+  "Anos Finais").
+
+O segundo critério entrou depois da primeira rodada na base real. Só com o perfil, o teste pegou o rendimento
+2018 e **deixou passar o ATU 2018**: na média de alunos por turma, 5º ano e anos finais têm proporções de `--`
+parecidas (60% e 68% em 2017), e a troca mexeu só 6 a 8 pontos, abaixo do limiar. Perfil de dado só denuncia uma
+troca entre colunas que se comportam diferente; a mudança de etapa do nome não depende disso. Com os dois
+critérios, as fixtures dão 18 alertas no rendimento 2018 (as 6 colunas deslocadas de cada bloco) e nenhum pelo
+rótulo. Sai como `DERIVA` no log da carga, antes de alguém olhar a série, e fica registrado no teste
+`assert_ind_perfil_igual_ao_ano_anterior` (severidade warn).
+
+Limite: o teste compara com o ano anterior. Um arquivo que já nasce errado no primeiro ano da série não tem com
+o que ser comparado.
 
 Os testes ficam em duas pastas: `tests/qualidade` (regra de negócio: o dado faz sentido?) e `tests/estrutura`
 (a coluna ainda é o que era?).

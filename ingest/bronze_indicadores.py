@@ -245,7 +245,7 @@ def perfil(nomes, rotulos, linhas) -> list[tuple]:
 def derivas(conn, sig, ano) -> list[tuple]:
     """Colunas deste arquivo cujo perfil mudou em relação ao ano anterior do mesmo indicador."""
     with conn.cursor() as cur:
-        cur.execute("""select ano_anterior, pareado_por, posicao, nome_tecnico, rotulo,
+        cur.execute("""select ano_anterior, pareado_por, motivo, posicao, nome_tecnico, rotulo_anterior, rotulo,
                               pct_ausente_anterior, pct_ausente, pct_numerico_anterior, pct_numerico
                        from meta.ind_deriva_perfil where sigla = %s and ano = %s
                        order by pareado_por, posicao""", (sig, ano))
@@ -342,8 +342,9 @@ def main() -> None:
             achadas = derivas(conn, sig, ano)
             if achadas:
                 com_deriva.append(f"{sig} {ano} ({len(achadas)} colunas)")
-            for ant, por, pos, nome, rot, aa, a, na, nn in achadas[:8]:
-                print(f"      DERIVA vs {ant}, pareado por {por}: col {pos} {nome} ({rot}) — "
+            for ant, por, motivo, pos, nome, rot_ant, rot, aa, a, na, nn in achadas[:8]:
+                etapa = f" | rótulo: {rot_ant} → {rot}" if "rotulo" in motivo else f" ({rot})"
+                print(f"      DERIVA [{motivo}] vs {ant}, pareado por {por}: col {pos} {nome}{etapa} — "
                       f'"--" {aa:.0%} → {a:.0%}, número {na:.0%} → {nn:.0%}')
             if len(achadas) > 8:
                 print(f"      ... e mais {len(achadas) - 8} (select * from meta.ind_deriva_perfil)")
