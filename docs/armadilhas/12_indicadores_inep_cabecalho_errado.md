@@ -65,11 +65,27 @@ critérios, as fixtures dão 18 alertas no rendimento 2018 (as 6 colunas desloca
 rótulo. Sai como `DERIVA` no log da carga, antes de alguém olhar a série, e fica registrado no teste
 `assert_ind_perfil_igual_ao_ano_anterior` (severidade warn).
 
-**Resultado na base real (rendimento e ATU, 2015–2025, 22 arquivos):** alertas em exatamente três arquivos —
-rendimento 2018 (18 colunas: perfil e rótulo), ATU 2018 (6 colunas: só rótulo) e ATU 2017 (1 coluna, ver abaixo).
-Nenhum em 2019–2025: os arquivos seguem deslocados do mesmo jeito que 2018, e o teste só vê a mudança. A primeira
-versão do critério de rótulo comparava texto e deu 54 alarmes falsos no rendimento 2016 ("Aprovação no 1º Ano"
-→ "1º Ano"); a etapa agora é normalizada (`meta.ind_etapa`) antes da comparação.
+**Resultado na base real (os 9 indicadores, 2013–2025).** Três rodadas até o teste ficar útil:
+
+| rodada | o que mudou | alertas |
+|---|---|---|
+| 1 | só perfil, contando `--` | rendimento 2018 certo, **ATU 2018 perdido** (falso negativo) |
+| 2 | + etapa do rótulo, comparando texto | 54 falsos no rendimento 2016 ("Aprovação no 1º Ano" → "1º Ano") |
+| 3 | etapa normalizada (`meta.ind_etapa`); perfil só pela proporção de **números** | ver abaixo |
+
+A troca de `--` por número na rodada 3 veio dos outros indicadores: o INEP alterna `--` e célula vazia entre anos
+(HAD 2019–2024, IED 2019–2020) sem mudar o conteúdo, o que dava 244 alarmes falsos. Os alertas que sobram, e o que
+cada um é:
+
+| arquivo | colunas | o que é |
+|---|---|---|
+| rendimento 2018 | 18 | nomes deslocados (seção 2) |
+| ATU 2018 | 6 | nomes deslocados (seção 2) |
+| ATU 2017 | 1 | categoria renomeada (abaixo) |
+| TDI 2016, HAD 2016 | 14, 4 | o conjunto de escolas do arquivo mudou (abaixo) |
+| INSE 2015 e 2019 | 1 cada | nome do município ausente em 2015 (abaixo) |
+| INSE 2023 | 3 | nível sem alunos vem vazio, não 0 (abaixo) |
+| HAD 2022 | 2 | 1º e 2º ano passam de 45% para 55% de escolas com valor; não explicado |
 
 Limite: o teste compara com o ano anterior. Um arquivo que já nasce errado no primeiro ano da série não tem com
 o que ser comparado.
@@ -90,6 +106,14 @@ Os testes ficam em duas pastas: `tests/qualidade` (regra de negócio: o dado faz
 - No ATU, a categoria "Turmas Unificadas" (2015–2016) passa a se chamar "Turmas Multietapa, Multi ou Correção de
   Fluxo" em 2017, na mesma coluna (`atu_unificada`). O teste de deriva aponta a troca; a proporção de `--` quase não
   muda (72% → 74%). Antes de montar série dessa coluna, conferir na nota técnica do INEP se a definição mudou.
+- No INSE 2015, a coluna `nome_municipio` repete o código do município (`co_municipio` = `nome_municipio` =
+  "1100205"): o arquivo não traz o nome. Não é troca de cabeçalho; o nome vem da dimensão de municípios.
+- No INSE 2023, o percentual de alunos de um nível sem alunos vem **vazio**, não 0 (nas edições anteriores, 0).
+  A silver trata vazio como 0 quando a escola tem algum nível preenchido; com isso as 69.756 escolas somam 100, o
+  que o teste de regra de negócio `assert_inse_niveis_somam_100` confere. Sem isso, a média de `pc_nivel_8` entre
+  escolas ignoraria as escolas com 0% e sairia inflada.
+- A proporção de escolas com valor muda de uma vez em todas as colunas do TDI 2016 (63% → 80%) e nos totais do HAD
+  2016 (54% → 64%): é o arquivo de 2015 que tem dezenas de milhares de escolas a mais, sem dado nessas etapas.
 - A cobertura muda: o HAD tem ~152 mil escolas em 2016–2021 e ~173 mil a partir de 2022; o TDI de 2015 tem
   179 mil escolas e o de 2016, 140 mil. Contar escolas entre anos sem olhar isso cria tendência falsa.
 - O INSE 2013 (edição 2011–2013) e o de 2015 usam metodologia anterior, com escala ~0–100 e classificação

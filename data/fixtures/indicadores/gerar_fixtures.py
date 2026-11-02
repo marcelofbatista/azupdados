@@ -207,6 +207,8 @@ def inse(ano):
         ws.append(cab + [f"PC_NIVEL_{n}" for n in range(1, 9)])
         for i, cod in enumerate(ESCOLAS):
             pcs = [0, 2.5, 10, 30, 40, 12.5, 5, 0]
+            if ano >= 2023:  # como no arquivo real: nível sem alunos vem vazio, não 0 (armadilha 12)
+                pcs = [p or None for p in pcs]
             base = ([ano, 53, "DF", "Distrito Federal", 5300108, "Brasília", int(cod), f"ESCOLA {cod}", 2, 1, 1]
                     if ano >= 2021 else
                     [int(cod), f"ESCOLA {cod}", 53, "Distrito Federal", 5300108, "Brasília", 1, 2, 1])

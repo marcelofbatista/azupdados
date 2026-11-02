@@ -3,6 +3,7 @@
   As edições mudam de layout (cod_escola/co_escola/id_escola; inse_valor_absoluto/media_inse) e de
   METODOLOGIA: 2013 (2011–2013) classifica em sete níveis nominais ("Muito Baixo" a "Muito Alto" → 1–7);
   2015, em "Grupo 1–6"; ambas em escala ~0–100. De 2019 em diante, escala do SAEB e "Nível I–VIII". O INEP avisa que as duas não são comparáveis: `eh_metodologia_saeb` separa.
+  Percentuais por nível (pc_nivel_1–8): vazio vira 0 quando a escola tem algum nível preenchido (INSE 2023, armadilha 12).
 #}
 {%- set rels = dbt_utils.get_relations_by_pattern('bronze', 'ind_inse_%') -%}
 {%- if rels | length == 0 %}
@@ -33,7 +34,12 @@ select {{ ano }} as ano_saeb,
            else case when trim({{ classe }}) ~ '[0-9]+\s*$' then (regexp_match({{ classe }}, '([0-9]+)\s*$'))[1]::int end
        end end as inse_nivel,
        {{ 'true' if ano >= 2019 else 'false' }} as eh_metodologia_saeb,
-       {% for n in range(1, 9) %}{% if ('pc_nivel_' ~ n) in cols %}{{ ind_numero('pc_nivel_' ~ n) }}{% else %}null::numeric{% endif %} as pc_nivel_{{ n }},
+       {%- set niveis = [] %}{% for n in range(1, 9) %}{% if ('pc_nivel_' ~ n) in cols %}{% do niveis.append(ind_numero('pc_nivel_' ~ n)) %}{% endif %}{% endfor %}
+       {% for n in range(1, 9) %}{% if ('pc_nivel_' ~ n) in cols -%}
+       -- célula vazia num nível de uma escola que tem os outros preenchidos é 0%, não "sem dado": no INSE 2023
+       -- o INEP deixa vazio o nível sem alunos, e com vazio = 0 as 69.756 escolas somam 100
+       case when coalesce({{ niveis | join(', ') }}) is not null then coalesce({{ ind_numero('pc_nivel_' ~ n) }}, 0) end
+       {%- else %}null::numeric{% endif %} as pc_nivel_{{ n }},
        {% endfor %}(not {{ ind_valor_ausente(valor) }} and {{ ind_numero(valor) }} is null)::int as qt_valores_invalidos
 from {{ rel }}
 {% if not loop.last %}union all{% endif %}
