@@ -27,9 +27,11 @@ CREATE TABLE IF NOT EXISTS meta.ind_perfil_coluna (
 --   pelo rótulo        → pega rótulo que passou a descrever outro dado (o caso que a silver não veria,
 --                        porque ela confia no rótulo).
 -- Dois motivos de alerta:
---   perfil   a proporção de "--" ou de números mudou 10 pontos ou mais. Compara proporções, não contagens:
+--   perfil   a proporção de valores numéricos mudou 10 pontos ou mais. Compara proporções, não contagens:
 --            a cobertura muda de verdade entre anos (TDI: 179 mil escolas em 2015, 140 mil em 2016).
---            No rendimento 2018, tap_f04 vai de 27% para 54% de "--".
+--            No rendimento 2018, tap_f04 vai de 73% para 46% de números. A proporção de "--" fica na view só
+--            como informação: na base real o INEP troca "--" por célula vazia e volta (HAD 2019: 62% → 0% de
+--            "--" com os mesmos 38% de números), o que dava 244 alarmes falsos no HAD e no IED.
 --   rotulo   pareado pelo nome, a etapa do rótulo (último trecho, ex. "5º ano") não é a do ano anterior.
 --            Existe porque o perfil sozinho falhou no ATU 2018: lá 5º ano e anos finais têm proporções de "--"
 --            parecidas (60% e 68%), a troca mexe só 6 a 8 pontos e passava abaixo do limiar.
@@ -83,8 +85,9 @@ pares AS (
 ),
 avaliado AS (
     SELECT *,
-           abs(pct_ausente - pct_ausente_anterior) >= 0.10
-             OR abs(pct_numerico - pct_numerico_anterior) >= 0.10                         AS mudou_perfil,
+           -- só a proporção de números: "--" e célula vazia são o mesmo "sem dado", e o INEP alterna entre os
+           -- dois de um ano para o outro (HAD 2019–2024, IED 2019–2020) sem mudar nada no conteúdo
+           abs(pct_numerico - pct_numerico_anterior) >= 0.10                                AS mudou_perfil,
            -- etapa nova não aparece no rótulo antigo, nem a antiga no novo; colunas de identificação (1–9) ficam
            -- de fora, como no carregador ("Nome Município" → "Nome do Município" não é deriva)
            pareado_por = 'nome' AND posicao > 9 AND etapa_rotulo <> etapa_anterior
