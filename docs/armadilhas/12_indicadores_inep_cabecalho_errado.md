@@ -65,6 +65,12 @@ critérios, as fixtures dão 18 alertas no rendimento 2018 (as 6 colunas desloca
 rótulo. Sai como `DERIVA` no log da carga, antes de alguém olhar a série, e fica registrado no teste
 `assert_ind_perfil_igual_ao_ano_anterior` (severidade warn).
 
+**Resultado na base real (rendimento e ATU, 2015–2025, 22 arquivos):** alertas em exatamente três arquivos —
+rendimento 2018 (18 colunas: perfil e rótulo), ATU 2018 (6 colunas: só rótulo) e ATU 2017 (1 coluna, ver abaixo).
+Nenhum em 2019–2025: os arquivos seguem deslocados do mesmo jeito que 2018, e o teste só vê a mudança. A primeira
+versão do critério de rótulo comparava texto e deu 54 alarmes falsos no rendimento 2016 ("Aprovação no 1º Ano"
+→ "1º Ano"); a etapa agora é normalizada (`meta.ind_etapa`) antes da comparação.
+
 Limite: o teste compara com o ano anterior. Um arquivo que já nasce errado no primeiro ano da série não tem com
 o que ser comparado.
 
@@ -81,6 +87,9 @@ Os testes ficam em duas pastas: `tests/qualidade` (regra de negócio: o dado faz
   depois `1_cat_fun_ai`, `edu_bas_cat_0`, `no_dependencia`, `co_entidade`. O ano da troca varia por
   indicador (2019 na maioria; 2021 no rendimento).
 - `--` é ausência de dado (etapa não oferecida ou sigilo), não zero.
+- No ATU, a categoria "Turmas Unificadas" (2015–2016) passa a se chamar "Turmas Multietapa, Multi ou Correção de
+  Fluxo" em 2017, na mesma coluna (`atu_unificada`). O teste de deriva aponta a troca; a proporção de `--` quase não
+  muda (72% → 74%). Antes de montar série dessa coluna, conferir na nota técnica do INEP se a definição mudou.
 - A cobertura muda: o HAD tem ~152 mil escolas em 2016–2021 e ~173 mil a partir de 2022; o TDI de 2015 tem
   179 mil escolas e o de 2016, 140 mil. Contar escolas entre anos sem olhar isso cria tendência falsa.
 - O INSE 2013 (edição 2011–2013) e o de 2015 usam metodologia anterior, com escala ~0–100 e classificação
